@@ -1,0 +1,23 @@
+---
+title: "Module 1: Dealing with Data"
+output: 
+  html_notebook:
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Import
+
+```{r import}
+```
+
+## Objects and Classes
+
+```{r objects, echo=FALSE}
+```
+
+## Python

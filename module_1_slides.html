@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Module 1: Dealing with Data</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="" />
+    <meta name="date" content="2019-05-05" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Module 1: Dealing with Data
+### 2019-05-05
+
+---
+
+
+&lt;!-- Make default font bigger --&gt;
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 30px;
+    
+}
+&lt;/style&gt;
+
+
+
+## Introduction
+
+---
+## Objects and Classes
+
+
+
+---
+
+## Importing Data
+
+
+
+---
+
+## Working with Databases
+
+---
+
+## Selecting Columns
+
+---
+
+## Filtering Rows
+
+---
+
+## Generating new data
+
+---
+
+## Grouping and Summarizing Operations
+
+---
+
+## Merging
+
+
+Mutating Joins — inner_join(), left_join(), right_join(), full_join()
+
+Filtering Joins — semi_join(), anti_join()
+
+---
+
+## Original Data Frame
+
+&lt;img src="img/original-dfs.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+## Left Join
+
+&gt; All rows from x, and all columns from x and y. Rows in x with no match in y will have NA values in the new columns.
+
+&lt;img src="img/left-join.gif" width="75%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Left Join (extra Rows in y)
+
+&gt; … If there are multiple matches between x and y, all combinations of the matches are returned.
+
+&lt;img src="img/left-join-extra.gif" width="75%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Right Join
+
+&gt; All rows from y, and all columns from x and y. Rows in y with no match in x will have NA values in the new columns.
+
+&lt;img src="img/right-join.gif" width="75%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Full Join
+
+&gt; All rows and all columns from both x and y. Where there are not matching values, returns NA for the one missing.
+
+&lt;img src="img/full-join.gif" width="66%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Inner Join
+
+&gt; All rows from x where there are matching values in y, and all columns from x and y.
+
+&lt;img src="img/inner-join.gif" width="75%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Semi Join
+
+&gt; All rows from x where there are matching values in y, keeping just columns from x.
+
+&lt;img src="img/semi-join.gif" width="75%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Anti Join
+
+&gt; All rows from x where there are not matching values in y, keeping just columns from x.
+
+&lt;img src="img/anti-join.gif" width="75%" style="display: block; margin: auto;" /&gt;
+
+---
+
+
+## Joins
+
+Figure credits: https://github.com/gadenbuie/tidyexplain
+
+
+---
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

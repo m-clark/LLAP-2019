@@ -1,7 +1,9 @@
 ---
 title: "Module 1: Dealing with Data"
 output: 
-  html_notebook:
+  html_notebook: 
+    highlight: pygments
+    theme: sandstone
 editor_options: 
   chunk_output_type: inline
 ---
@@ -10,14 +12,36 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Import
-
-```{r import}
-```
 
 ## Objects and Classes
 
 ```{r objects, echo=FALSE}
 ```
 
-## Python
+## Importing Data
+
+```{r import}
+```
+
+
+## Working with Databases
+
+
+## Selecting Columns
+
+## Filtering Rows
+
+## Generating new data
+
+## Grouping and Summarizing Operations
+
+## Merging
+
+
+### Mutating Joins — inner_join(), left_join(), right_join(), full_join()
+
+### Filtering Joins — semi_join(), anti_join()
+
+
+
+## Python examples

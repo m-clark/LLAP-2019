@@ -16,12 +16,143 @@ output:
 <style type="text/css">
 .remark-slide-content {
     font-size: 30px;
-    padding: 1em 4em 1em 4em;
+    
 }
 </style>
 
-## First Slide
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, fig.align='center')
+```
+
+## Introduction
+
+---
+## Objects and Classes
+
+```{r objects, echo=FALSE}
+```
 
 ---
 
-## Second slide
+## Importing Data
+
+```{r import}
+```
+
+---
+
+## Working with Databases
+
+---
+
+## Selecting Columns
+
+---
+
+## Filtering Rows
+
+---
+
+## Generating new data
+
+---
+
+## Grouping and Summarizing Operations
+
+---
+
+## Merging
+
+
+Mutating Joins — inner_join(), left_join(), right_join(), full_join()
+
+Filtering Joins — semi_join(), anti_join()
+
+---
+
+## Original Data Frame
+
+```{r origdf, out.width='100%'}
+knitr::include_graphics('img/original-dfs.png')
+```
+
+
+---
+
+## Left Join
+
+> All rows from x, and all columns from x and y. Rows in x with no match in y will have NA values in the new columns.
+
+```{r left_join, out.width='75%'}
+knitr::include_graphics('img/left-join.gif')
+```
+
+---
+
+## Left Join (extra Rows in y)
+
+> … If there are multiple matches between x and y, all combinations of the matches are returned.
+
+```{r left_join_extra, out.width='75%'}
+knitr::include_graphics('img/left-join-extra.gif')
+```
+
+---
+
+## Right Join
+
+> All rows from y, and all columns from x and y. Rows in y with no match in x will have NA values in the new columns.
+
+```{r right_join, out.width='75%'}
+knitr::include_graphics('img/right-join.gif')
+```
+
+---
+
+## Full Join
+
+> All rows and all columns from both x and y. Where there are not matching values, returns NA for the one missing.
+
+```{r full_join, out.width='66%'}
+knitr::include_graphics('img/full-join.gif')
+```
+
+---
+
+## Inner Join
+
+> All rows from x where there are matching values in y, and all columns from x and y.
+
+```{r inner_join, out.width='75%'}
+knitr::include_graphics('img/inner-join.gif')
+```
+
+---
+
+## Semi Join
+
+> All rows from x where there are matching values in y, keeping just columns from x.
+
+```{r semi_join, out.width='75%'}
+knitr::include_graphics('img/semi-join.gif')
+```
+
+---
+
+## Anti Join
+
+> All rows from x where there are not matching values in y, keeping just columns from x.
+
+```{r anti_join, out.width='75%'}
+knitr::include_graphics('img/anti-join.gif')
+```
+
+---
+
+
+## Joins
+
+Figure credits: https://github.com/gadenbuie/tidyexplain
+
+
+---

@@ -42,13 +42,16 @@ d-article h1, h2, h3 {
 }
 
 .d-code {
-  font-family: 'Fira Code', 'Roboto Mono', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', 'Courier New', monospace;
+  font-family: 'Roboto Mono', 'Fira Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', 'Courier New', monospace;
 }
 
 pre.text-output {
   color: #404040FF;
 }
 
+code {
+  font-family: 'Roboto Mono', 'Fira Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', 'Courier New', monospace;
+}
 
 /* text highlights */
 .emph {

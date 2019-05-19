@@ -22,7 +22,6 @@ class: center, middle, inverse, title-slide
 &lt;style type="text/css"&gt;
 .remark-slide-content {
     font-size: 30px;
-    
 }
 &lt;/style&gt;
 
@@ -240,36 +239,6 @@ For specific scenarios:
 
 ---
 
-## Grouping and Summarizing Operations
-
-A very common operation is to do things by group(s) then create new summary variables.
-
-
-```r
-starwars %&gt;% 
-  group_by(species) %&gt;% 
-  summarise(height = mean(height, na.rm = T)) 
-```
-
-```
-# A tibble: 38 x 2
-   species   height
-   &lt;chr&gt;      &lt;dbl&gt;
- 1 &lt;NA&gt;         160
- 2 Aleena        79
- 3 Besalisk     198
- 4 Cerean       198
- 5 Chagrian     196
- 6 Clawdite     168
- 7 Droid        140
- 8 Dug          112
- 9 Ewok          88
-10 Geonosian    183
-# … with 28 more rows
-```
-
-
----
 
 ## Renaming columns
 

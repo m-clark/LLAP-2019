@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Module 2: Exploring &amp; Summarizing Data</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="" />
+    <meta name="date" content="2019-05-19" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Module 2: Exploring &amp; Summarizing Data
+### 2019-05-19
+
+---
+
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 30px;
+}
+&lt;/style&gt;
+
+
+## Introduction
+
+---
+## Quick Summary
+
+
+```r
+glimpse(starwars)
+summary(starwars[,1:10])
+```
+
+
+
+## Grouping and Summarizing Operations
+
+A very common operation is to do things by group(s) then create new summary variables.
+
+
+```r
+starwars %&gt;% 
+  group_by(homeworld) %&gt;% 
+  summarise(height = mean(height, na.rm = T),
+            mass = mean(mass, na.rm = T)) 
+```
+
+```
+# A tibble: 49 x 3
+   homeworld      height  mass
+   &lt;chr&gt;           &lt;dbl&gt; &lt;dbl&gt;
+ 1 &lt;NA&gt;             139.    82
+ 2 Alderaan         176.    64
+ 3 Aleen Minor       79     15
+ 4 Bespin           175     79
+ 5 Bestine IV       180    110
+ 6 Cato Neimoidia   191     90
+ 7 Cerea            198     82
+ 8 Champala         196    NaN
+ 9 Chandrila        150    NaN
+10 Concord Dawn     183     79
+# … with 39 more rows
+```
+
+## Grouping and Summarizing Operations
+
+Can do multiple operations at once
+
+
+```r
+mtcars %&gt;% 
+  group_by(cyl) %&gt;% 
+  summarise(Mean = mean(mpg),
+            `Std. Dev.` = sd(mpg),
+            Max = max(mpg)) 
+```
+
+```
+# A tibble: 3 x 4
+    cyl  Mean `Std. Dev.`   Max
+  &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;
+1     4  26.7        4.51  33.9
+2     6  19.7        1.45  21.4
+3     8  15.1        2.56  19.2
+```
+
+---
+
+##  Mapping functions to groups
+
+
+The &lt;span class="pack"&gt;purrr&lt;/span&gt; package
+
+Consider the following. We’ll use the &lt;span class="func"&gt;map&lt;/span&gt; function to map the &lt;span class="func"&gt;sum&lt;/span&gt; function to each element in the list
+
+
+```r
+x = list(1:3, 4:6, 7:9)
+map(x, sum)
+```
+
+---
+
+## Grouping and Summarizing Operations
+
+Even models
+
+
+```r
+mpg %&gt;% 
+  group_split(year) %&gt;% 
+  map(~coef(lm(hwy ~ cty, data = .))) 
+
+mpg %&gt;% 
+  group_by(year) %&gt;% 
+  group_map(~coef(lm(hwy ~ cty, data = .)))
+```
+
+```
+[[1]]
+(Intercept)         cty 
+   1.346530    1.297567 
+
+[[2]]
+(Intercept)         cty 
+  0.2388199   1.3899990 
+
+[[1]]
+(Intercept)         cty 
+   1.346530    1.297567 
+
+[[2]]
+(Intercept)         cty 
+  0.2388199   1.3899990 
+```
+
+---
+## Visualization
+
+the information you want to display, and then how you want to display it in order to tell the data’s story.
+
+---
+
+## Things to think about
+
+- Color
+- Contrast
+- Size
+- Transparency
+- Legibility
+- Accessibility
+- File types
+
+## ggplot2
+
+The most widely used visualization package in R
+
+Copied into other realms (e.g. Python)
+
+## Layers
+
+---
+
+## More pipes
+
+---
+
+## Aesthetics
+
+---
+
+## Geoms
+
+---
+
+## Stats
+
+---
+
+## Scales
+
+---
+
+## Facets
+
+---
+
+## Interactivity
+
+---
+
+## Interactivity
+
+
+General 
+
+- [plotly](https://plot.ly/r/)
+  - used also in Python, Matlab, Julia
+  - can convert &lt;span class="pack"&gt;ggplot2&lt;/span&gt; images to interactive ones (with varying degrees of success)
+- [highcharter](http://jkunst.com/highcharter/)
+  - also very general wrapper for highcharts.js and works with some R packages out of the box
+- [rbokeh](http://hafen.github.io/rbokeh/)
+  - like plotly, it also has cross language support
+
+---
+
+## Interactivity
+
+Specific functionality:
+
+- [DT](https://rstudio.github.io/DT/)
+  - interactive data tables
+- [leaflet](https://rstudio.github.io/leaflet/)
+    - maps with OpenStreetMap
+- [visNetwork](http://datastorm-open.github.io/visNetwork/)
+    - Network visualization
+    
+---
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

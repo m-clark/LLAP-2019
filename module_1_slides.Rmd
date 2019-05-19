@@ -16,7 +16,6 @@ output:
 <style type="text/css">
 .remark-slide-content {
     font-size: 30px;
-    
 }
 </style>
 
@@ -236,18 +235,6 @@ For specific scenarios:
 
 ---
 
-## Grouping and Summarizing Operations
-
-A very common operation is to do things by group(s) then create new summary variables.
-
-```{r group_by, eval=TRUE}
-starwars %>% 
-  group_by(species) %>% 
-  summarise(height = mean(height, na.rm = T)) 
-```
-
-
----
 
 ## Renaming columns
 

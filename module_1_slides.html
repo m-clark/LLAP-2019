@@ -4,7 +4,7 @@
     <title>Module 1: Dealing with Data</title>
     <meta charset="utf-8" />
     <meta name="author" content="" />
-    <meta name="date" content="2019-05-09" />
+    <meta name="date" content="2019-05-16" />
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
     <link rel="stylesheet" href="other.css" type="text/css" />
   </head>
@@ -13,7 +13,7 @@
 class: center, middle, inverse, title-slide
 
 # Module 1: Dealing with Data
-### 2019-05-09
+### 2019-05-16
 
 ---
 
@@ -149,10 +149,7 @@ Filtering Joins — semi_join(), anti_join()
 
 ## Original Data Frame
 
-
-```r
-knitr::include_graphics('img/original-dfs.png')
-```
+&lt;img src="img/original-dfs.png" width="100%" style="display: block; margin: auto;" /&gt;
 
 
 ---
@@ -161,10 +158,7 @@ knitr::include_graphics('img/original-dfs.png')
 
 &gt; All rows from x, and all columns from x and y. Rows in x with no match in y will have NA values in the new columns.
 
-
-```r
-knitr::include_graphics('img/left-join.gif')
-```
+&lt;img src="img/left-join.gif" width="75%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -172,10 +166,7 @@ knitr::include_graphics('img/left-join.gif')
 
 &gt; … If there are multiple matches between x and y, all combinations of the matches are returned.
 
-
-```r
-knitr::include_graphics('img/left-join-extra.gif')
-```
+&lt;img src="img/left-join-extra.gif" width="75%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -183,10 +174,7 @@ knitr::include_graphics('img/left-join-extra.gif')
 
 &gt; All rows from y, and all columns from x and y. Rows in y with no match in x will have NA values in the new columns.
 
-
-```r
-knitr::include_graphics('img/right-join.gif')
-```
+&lt;img src="img/right-join.gif" width="75%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -194,10 +182,7 @@ knitr::include_graphics('img/right-join.gif')
 
 &gt; All rows and all columns from both x and y. Where there are not matching values, returns NA for the one missing.
 
-
-```r
-knitr::include_graphics('img/full-join.gif')
-```
+&lt;img src="img/full-join.gif" width="66%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -205,10 +190,7 @@ knitr::include_graphics('img/full-join.gif')
 
 &gt; All rows from x where there are matching values in y, and all columns from x and y.
 
-
-```r
-knitr::include_graphics('img/inner-join.gif')
-```
+&lt;img src="img/inner-join.gif" width="75%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -216,10 +198,7 @@ knitr::include_graphics('img/inner-join.gif')
 
 &gt; All rows from x where there are matching values in y, keeping just columns from x.
 
-
-```r
-knitr::include_graphics('img/semi-join.gif')
-```
+&lt;img src="img/semi-join.gif" width="75%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -227,10 +206,7 @@ knitr::include_graphics('img/semi-join.gif')
 
 &gt; All rows from x where there are not matching values in y, keeping just columns from x.
 
-
-```r
-knitr::include_graphics('img/anti-join.gif')
-```
+&lt;img src="img/anti-join.gif" width="75%" style="display: block; margin: auto;" /&gt;
 
 ---
 

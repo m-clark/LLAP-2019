@@ -153,7 +153,7 @@ Filtering Joins — semi_join(), anti_join()
 
 ## Original Data Frame
 
-```{r origdf, out.width='100%'}
+```{r origdf, out.width='100%', eval=T, echo=FALSE}
 knitr::include_graphics('img/original-dfs.png')
 ```
 
@@ -164,7 +164,7 @@ knitr::include_graphics('img/original-dfs.png')
 
 > All rows from x, and all columns from x and y. Rows in x with no match in y will have NA values in the new columns.
 
-```{r left_join, out.width='75%'}
+```{r left_join, out.width='75%', eval=T, echo=FALSE}
 knitr::include_graphics('img/left-join.gif')
 ```
 
@@ -174,7 +174,7 @@ knitr::include_graphics('img/left-join.gif')
 
 > … If there are multiple matches between x and y, all combinations of the matches are returned.
 
-```{r left_join_extra, out.width='75%'}
+```{r left_join_extra, out.width='75%', eval=T, echo=FALSE}
 knitr::include_graphics('img/left-join-extra.gif')
 ```
 
@@ -184,7 +184,7 @@ knitr::include_graphics('img/left-join-extra.gif')
 
 > All rows from y, and all columns from x and y. Rows in y with no match in x will have NA values in the new columns.
 
-```{r right_join, out.width='75%'}
+```{r right_join, out.width='75%', eval=T, echo=FALSE}
 knitr::include_graphics('img/right-join.gif')
 ```
 
@@ -194,7 +194,7 @@ knitr::include_graphics('img/right-join.gif')
 
 > All rows and all columns from both x and y. Where there are not matching values, returns NA for the one missing.
 
-```{r full_join, out.width='66%'}
+```{r full_join, out.width='66%', eval=T, echo=FALSE}
 knitr::include_graphics('img/full-join.gif')
 ```
 
@@ -204,7 +204,7 @@ knitr::include_graphics('img/full-join.gif')
 
 > All rows from x where there are matching values in y, and all columns from x and y.
 
-```{r inner_join, out.width='75%'}
+```{r inner_join, out.width='75%', eval=T, echo=FALSE}
 knitr::include_graphics('img/inner-join.gif')
 ```
 
@@ -214,7 +214,7 @@ knitr::include_graphics('img/inner-join.gif')
 
 > All rows from x where there are matching values in y, keeping just columns from x.
 
-```{r semi_join, out.width='75%'}
+```{r semi_join, out.width='75%', eval=T, echo=FALSE}
 knitr::include_graphics('img/semi-join.gif')
 ```
 
@@ -224,7 +224,7 @@ knitr::include_graphics('img/semi-join.gif')
 
 > All rows from x where there are not matching values in y, keeping just columns from x.
 
-```{r anti_join, out.width='75%'}
+```{r anti_join, out.width='75%', eval=T, echo=FALSE}
 knitr::include_graphics('img/anti-join.gif')
 ```
 

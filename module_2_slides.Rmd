@@ -192,3 +192,63 @@ Specific functionality:
     - Network visualization
     
 ---
+
+## Plotly
+
+plotly has modes, which allow for points, lines, text and combinations. Traces, add_*, work similar to geoms.
+
+---
+
+## Plotly
+
+```{r plotly}
+library(plotly)
+midwest %>% 
+  filter(inmetro==T) %>% 
+  plot_ly(x=~percbelowpoverty, y=~percollege) %>% 
+  add_markers()
+```
+
+---
+## Plotly
+
+```{r}
+library(mgcv); library(modelr); library(glue)
+
+mtcars %>% 
+  mutate(amFactor = factor(am, labels=c('auto', 'manual')),
+         hovertext = glue('weight: {wt} <br> mgp:  {mpg} <br> {amFactor}')) %>% 
+  add_predictions(gam(mpg~s(wt, am, bs='fs'), data=mtcars)) %>% 
+  plot_ly() %>%
+  add_markers(x=~wt, 
+              y=~mpg, 
+              color=~amFactor, 
+              opacity=.5, 
+              text=~hovertext, 
+              hoverinfo='text', 
+              showlegend=F) %>% 
+  add_lines(x=~wt, 
+            y=~pred, 
+            color=~amFactor, 
+            name='gam prediction')
+```
+
+---
+
+## Plotly
+
+
+One of the strengths of plotly is that we can feed a ggplot object to it, and turn our formerly static plots into interactive ones. 
+
+```{r}
+gp = mtcars %>% 
+  mutate(amFactor = factor(am, labels=c('auto', 'manual')),
+         hovertext = paste(wt, mpg, amFactor)) %>% 
+  arrange(wt) %>% 
+  ggplot(aes(x=wt, y=mpg, color=amFactor)) +
+  geom_smooth(se=F) +
+  geom_point(aes(color=amFactor))
+ggplotly()
+```
+
+---

@@ -17,3 +17,5 @@ vignettes/*.pdf
 .Rproj.user
 
 data/
+
+~$*.docx

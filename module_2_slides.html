@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="" />
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="other.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
@@ -26,15 +27,22 @@ class: center, middle, inverse, title-slide
 ## Introduction
 
 ---
+
 ## Quick Summary
+
+It's always a good idea to glance at the data
+
+Get a feel for the data types
+
+Spot potential issues
 
 
 ```r
-glimpse(starwars)
-summary(starwars[,1:10])
+glimpse(demographics)
+summary(demographics[,1:10])
 ```
 
-
+---
 
 ## Grouping and Summarizing Operations
 
@@ -42,28 +50,20 @@ A very common operation is to do things by group(s) then create new summary vari
 
 
 ```r
-starwars %&gt;% 
-  group_by(homeworld) %&gt;% 
-  summarise(height = mean(height, na.rm = T),
-            mass = mean(mass, na.rm = T)) 
+demographics %&gt;% 
+  group_by(libuser) %&gt;% 
+  summarise(age = mean(age, na.rm = T)) 
 ```
 
 ```
-# A tibble: 49 x 3
-   homeworld      height  mass
-   &lt;chr&gt;           &lt;dbl&gt; &lt;dbl&gt;
- 1 &lt;NA&gt;             139.    82
- 2 Alderaan         176.    64
- 3 Aleen Minor       79     15
- 4 Bespin           175     79
- 5 Bestine IV       180    110
- 6 Cato Neimoidia   191     90
- 7 Cerea            198     82
- 8 Champala         196    NaN
- 9 Chandrila        150    NaN
-10 Concord Dawn     183     79
-# … with 39 more rows
+# A tibble: 2 x 2
+  libuser   age
+    &lt;int&gt; &lt;dbl&gt;
+1       0  56.2
+2       1  58.7
 ```
+
+---
 
 ## Grouping and Summarizing Operations
 
@@ -71,20 +71,20 @@ Can do multiple operations at once
 
 
 ```r
-mtcars %&gt;% 
-  group_by(cyl) %&gt;% 
-  summarise(Mean = mean(mpg),
-            `Std. Dev.` = sd(mpg),
-            Max = max(mpg)) 
+demographics %&gt;% 
+  group_by(libuser) %&gt;% 
+  summarise(age_mean = mean(age, na.rm = T),
+            age_sd = sd(age, na.rm = T),
+            age_max = max(age, na.rm = T),
+            prop_male = mean(gender=='Male', na.rm = T)) 
 ```
 
 ```
-# A tibble: 3 x 4
-    cyl  Mean `Std. Dev.`   Max
-  &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;
-1     4  26.7        4.51  33.9
-2     6  19.7        1.45  21.4
-3     8  15.1        2.56  19.2
+# A tibble: 2 x 5
+  libuser age_mean age_sd age_max prop_male
+    &lt;int&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+1       0     56.2   10.7    93.5     0.701
+2       1     58.7   12.1   101.      0.732
 ```
 
 ---
@@ -92,9 +92,9 @@ mtcars %&gt;%
 ##  Mapping functions to groups
 
 
-The &lt;span class="pack"&gt;purrr&lt;/span&gt; package
+Use the &lt;span class="pack"&gt;purrr&lt;/span&gt; package (part of &lt;span class="pack"&gt;tidyverse&lt;/span&gt;)
 
-Consider the following. We’ll use the &lt;span class="func"&gt;map&lt;/span&gt; function to map the &lt;span class="func"&gt;sum&lt;/span&gt; function to each element in the list
+Consider the following: we’ll use the &lt;span class="func"&gt;map&lt;/span&gt; function to *map* the &lt;span class="func"&gt;sum&lt;/span&gt; function to each element in the list
 
 
 ```r
@@ -102,57 +102,85 @@ x = list(1:3, 4:6, 7:9)
 map(x, sum)
 ```
 
+```
+[[1]]
+[1] 6
+
+[[2]]
+[1] 15
+
+[[3]]
+[1] 24
+```
+
 ---
 
 ## Grouping and Summarizing Operations
 
-Even models
+We can even do this with modeling and other operations.
 
 
 ```r
-mpg %&gt;% 
-  group_split(year) %&gt;% 
-  map(~coef(lm(hwy ~ cty, data = .))) 
+model_variables = read.csv('data/model_variables_anonymized.csv')
 
-mpg %&gt;% 
-  group_by(year) %&gt;% 
-  group_map(~coef(lm(hwy ~ cty, data = .)))
+model_variables %&gt;% 
+  group_split(race) %&gt;% 
+  map(~coef(lm(award_total_amount ~ gender, data = .))) 
 ```
 
 ```
 [[1]]
-(Intercept)         cty 
-   1.346530    1.297567 
+(Intercept)  genderMale 
+  432562.08   -41098.35 
 
 [[2]]
-(Intercept)         cty 
-  0.2388199   1.3899990 
+(Intercept)  genderMale 
+   343868.3    168736.8 
 
-[[1]]
-(Intercept)         cty 
-   1.346530    1.297567 
+[[3]]
+(Intercept)  genderMale 
+  383422.95   -23442.35 
 
-[[2]]
-(Intercept)         cty 
-  0.2388199   1.3899990 
+[[4]]
+(Intercept)  genderMale 
+   277124.7    272169.7 
+
+[[5]]
+(Intercept)  genderMale 
+  364071.42    37700.54 
 ```
 
 ---
 ## Visualization
 
-the information you want to display, and then how you want to display it in order to tell the data’s story.
+Visualizing data requires that you:
+- Consider carefully the information you want to display
+- And then how you want to display it
+
+Tell a story with the data.
+
+And have some fun with it!
 
 ---
 
 ## Things to think about
 
-- Color
-- Contrast
-- Size
-- Transparency
-- Legibility
-- Accessibility
-- File types
+
+&lt;span style="color: cornflowerblue"&gt;Color&lt;/span&gt;
+
+&lt;span style="color: black"&gt;Contrast&lt;/span&gt;
+
+&lt;span style="font-size: 200%"&gt;Size&lt;/span&gt;
+
+&lt;span style="color: #0000001A"&gt;Transparency&lt;/span&gt;
+
+&lt;span style="font-variant: small-caps; font-family: 'Alex Brush'"&gt;Legibility&lt;/span&gt;
+
+&lt;span style="color: red"&gt;Access&lt;/span&gt;&lt;span style="color: green"&gt;ibility&lt;/span&gt;
+
+File types
+
+---
 
 ## ggplot2
 
@@ -160,19 +188,80 @@ The most widely used visualization package in R
 
 Copied into other realms (e.g. Python)
 
+---
+
 ## Layers
 
+Visualization can be thought of in a layered fashion
+
+
+&lt;div style="margin-left: 0%"&gt;base&lt;/div&gt;
+&lt;div style="margin-left: 10%"&gt;main plot&lt;/div&gt;
+&lt;div style="margin-left: 20%"&gt;options&lt;/div&gt;
+    
 ---
 
 ## More pipes
+
+ggplot2 uses a `+` as a pipe to add layers
+
+
+```r
+library(ggplot2)
+ggplot(data) +
+  geom_point(aes(x = var1, y = var2)) +
+  geom_line() +
+  theme(plot.caption = element_text(size = 6))
+```
+
+We can pipe *to* any ggplot as we did before (` %&gt;% `)
 
 ---
 
 ## Aesthetics
 
+&lt;span class="emph"&gt;Aesthetics&lt;/span&gt; (`aes`) map variables to visual properties
+
+&lt;span class="emph"&gt;Geoms&lt;/span&gt; are the geometric units we want to display
+
+
 ---
 
-## Geoms
+## Aesthetics
+
+
+```r
+model_variables %&gt;% 
+  filter(award_total_amount &gt;= 50000) %&gt;% 
+ggplot() +
+  geom_density(aes(x = award_total_amount, 
+                   color = gender,
+                   fill = gender),
+               alpha = .2) + 
+  scale_x_continuous(breaks = c(1e5, 1e6, 1e7, 1e8), trans = 'log')
+```
+
+
+---
+
+## Aesthetics
+
+&lt;img src="module_2_slides_files/figure-html/aesthetics2-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+
+## Stats
+
+We can also use ggplot2 to create statistics we want to visualize
+
+
+```r
+model_variables %&gt;% 
+  ggplot() 
+  stat_density(award_total_amount &gt;= 50000) %&gt;% 
+```
+
 
 ---
 
@@ -182,8 +271,17 @@ Copied into other realms (e.g. Python)
 
 ## Scales
 
+&lt;img src="module_2_slides_files/figure-html/scales2-1.svg" style="display: block; margin: auto;" /&gt;
 ---
 
+## Scales
+
+
+---
+
+## Facets
+
+---
 ## Facets
 
 ---

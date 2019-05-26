@@ -5,7 +5,7 @@ author: ""
 output: 
   xaringan::moon_reader:
     lib_dir: libs
-    css: xaringan-themer.css
+    css: [xaringan-themer.css, other.css]
     nature:
       highlightStyle: github
       highlightLines: true
@@ -47,37 +47,45 @@ rnd = function(x, digits = 3) arm::fround(x, digits = digits)
 ## Introduction
 
 ---
+
 ## Quick Summary
 
-```{r}
-glimpse(starwars)
-summary(starwars[,1:10])
+It's always a good idea to glance at the data
 
+Get a feel for the data types
+
+Spot potential issues
+
+```{r summary}
+glimpse(demographics)
+summary(demographics[,1:10])
 ```
 
-
+---
 
 ## Grouping and Summarizing Operations
 
 A very common operation is to do things by group(s) then create new summary variables.
 
 ```{r group_by, eval=TRUE}
-starwars %>% 
-  group_by(homeworld) %>% 
-  summarise(height = mean(height, na.rm = T),
-            mass = mean(mass, na.rm = T)) 
+demographics %>% 
+  group_by(libuser) %>% 
+  summarise(age = mean(age, na.rm = T)) 
 ```
+
+---
 
 ## Grouping and Summarizing Operations
 
 Can do multiple operations at once
 
 ```{r group_by2, eval=TRUE}
-mtcars %>% 
-  group_by(cyl) %>% 
-  summarise(Mean = mean(mpg),
-            `Std. Dev.` = sd(mpg),
-            Max = max(mpg)) 
+demographics %>% 
+  group_by(libuser) %>% 
+  summarise(age_mean = mean(age, na.rm = T),
+            age_sd = sd(age, na.rm = T),
+            age_max = max(age, na.rm = T),
+            prop_male = mean(gender=='Male', na.rm = T)) 
 ```
 
 ---
@@ -85,11 +93,11 @@ mtcars %>%
 ##  Mapping functions to groups
 
 
-The <span class="pack">purrr</span> package
+Use the <span class="pack">purrr</span> package (part of <span class="pack">tidyverse</span>)
 
-Consider the following. We’ll use the <span class="func">map</span> function to map the <span class="func">sum</span> function to each element in the list
+Consider the following: we’ll use the <span class="func">map</span> function to *map* the <span class="func">sum</span> function to each element in the list
 
-```{r map}
+```{r map, eval=TRUE}
 x = list(1:3, 4:6, 7:9)
 map(x, sum)
 ```
@@ -98,34 +106,47 @@ map(x, sum)
 
 ## Grouping and Summarizing Operations
 
-Even models
+We can even do this with modeling and other operations.
 
-```{r group_by3, eval=TRUE, results='hold'}
-mpg %>% 
-  group_split(year) %>% 
-  map(~coef(lm(hwy ~ cty, data = .))) 
+```{r group_by3, eval=TRUE}
+model_variables = read.csv('data/model_variables_anonymized.csv')
 
-mpg %>% 
-  group_by(year) %>% 
-  group_map(~coef(lm(hwy ~ cty, data = .)))
+model_variables %>% 
+  group_split(race) %>% 
+  map(~coef(lm(award_total_amount ~ gender, data = .))) 
 ```
 
 ---
 ## Visualization
 
-the information you want to display, and then how you want to display it in order to tell the data’s story.
+Visualizing data requires that you:
+- Consider carefully the information you want to display
+- And then how you want to display it
+
+Tell a story with the data.
+
+And have some fun with it!
 
 ---
 
 ## Things to think about
 
-- Color
-- Contrast
-- Size
-- Transparency
-- Legibility
-- Accessibility
-- File types
+
+<span style="color: cornflowerblue">Color</span>
+
+<span style="color: black">Contrast</span>
+
+<span style="font-size: 200%">Size</span>
+
+<span style="color: #0000001A">Transparency</span>
+
+<span style="font-variant: small-caps; font-family: 'Alex Brush'">Legibility</span>
+
+<span style="color: red">Access</span><span style="color: green">ibility</span>
+
+File types
+
+---
 
 ## ggplot2
 
@@ -133,19 +154,86 @@ The most widely used visualization package in R
 
 Copied into other realms (e.g. Python)
 
+---
+
 ## Layers
 
+Visualization can be thought of in a layered fashion
+
+
+<div style="margin-left: 0%">base</div>
+<div style="margin-left: 10%">main plot</div>
+<div style="margin-left: 20%">options</div>
+    
 ---
 
 ## More pipes
+
+ggplot2 uses a `+` as a pipe to add layers
+
+```{r ggplot2}
+library(ggplot2)
+ggplot(data) +
+  geom_point(aes(x = var1, y = var2)) +
+  geom_line() +
+  theme(plot.caption = element_text(size = 6))
+```
+
+We can pipe *to* any ggplot as we did before (` %>% `)
 
 ---
 
 ## Aesthetics
 
+<span class="emph">Aesthetics</span> (`aes`) map variables to visual properties
+
+<span class="emph">Geoms</span> are the geometric units we want to display
+
+
 ---
 
-## Geoms
+## Aesthetics
+
+```{r aesthetics}
+model_variables %>% 
+  filter(award_total_amount >= 50000) %>% 
+ggplot() +
+  geom_density(aes(x = award_total_amount, 
+                   color = gender,
+                   fill = gender),
+               alpha = .2) + 
+  scale_x_continuous(breaks = c(1e5, 1e6, 1e7, 1e8), trans = 'log')
+```
+
+
+---
+
+## Aesthetics
+
+```{r aesthetics2, eval=TRUE, echo=FALSE}
+model_variables %>% 
+  filter(award_total_amount >= 50000) %>% 
+  ggplot() +
+  geom_density(aes(x = award_total_amount, 
+                   color = gender,
+                   fill = gender),
+               alpha = .2) + 
+  scale_x_continuous(breaks = c(1e5, 1e6, 1e7, 1e8), trans = 'log')
+```
+
+---
+
+
+## Stats
+
+We can also use ggplot2 to create statistics we want to visualize
+
+```{r ggstats}
+model_variables %>% 
+  ggplot() 
+  stat_density(award_total_amount >= 50000) %>% 
+```
+
 
 ---
 
@@ -155,8 +243,29 @@ Copied into other realms (e.g. Python)
 
 ## Scales
 
+```{r scales2, eval=TRUE, echo=FALSE}
+model_variables %>% 
+  filter(award_total_amount >= 50000) %>% 
+  ggplot() +
+  geom_density(aes(x = award_total_amount, 
+                   color = gender,
+                   fill = gender),
+               alpha = .2) + 
+  scale_x_continuous(breaks = c(1e5, 1e6, 1e7, 1e8), 
+                     trans = 'log') +
+  scale_fill_viridis_d(begin = .25, end = .5) +
+  scale_color_viridis_d(begin = .25, end = .5) 
+```
 ---
 
+## Scales
+
+
+---
+
+## Facets
+
+---
 ## Facets
 
 ---

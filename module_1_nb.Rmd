@@ -8,8 +8,11 @@ editor_options:
   chunk_output_type: inline
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+## Setup
+
+```{r setup}
+library(tidyverse)
 ```
 
 
@@ -43,13 +46,6 @@ my_list <- list(a = 1, b = 2)   # a named list
 my_list
 ```
 
-## Importing Data
-
-```{r import}
-lla = read
-```
-
-
 ## Data frames
 
 Data frames are a special kind of list, and probably the most commonly used for data science purposes.
@@ -64,42 +60,155 @@ my_data
 class(my_data)
 ```
 
+## Importing Data
+
+```{r import, eval=TRUE}
+demographics = read.csv('data/demos_anonymized.csv')
+ids = read.csv('data/ids_anonymized.csv')
+```
 
 ## Working with Databases
 
-```{r}
+```{r databases, eval=FALSE}
+# requires DBI and RSQLite packages
+library(DBI)
 con <- dbConnect(RSQLite::SQLite(), ":memory:")
-con
+# con
 
+copy_to(con, demographics, 'demos')
 ```
 
 
-## Using SQL directly in an R Notebook
-
-Your R chunk will specify that it is a SQL chunk, not an R chunk, and it will also note the name of the connection.
-
-```{sql, connection=con, output.var = "mydataframe"}
-SELECT "month_idx", "year", "month", SUM(CASE WHEN ("term_deposit" = 'yes') THEN (1.0) ELSE (0.0) END) AS "subscribe",
-COUNT(*) AS "total"
-FROM ("bank") 
-GROUP BY "month_idx", "year", "month"
-```
 
 ## Selecting Columns
 
+```{r select1}
+demographics %>% 
+  select(gender, age, libuser)
+```
+
+
+```{r select2}
+demographics %>% 
+  select(-libuser)
+```
+
+```{r select3}
+demographics %>% 
+  select(starts_with('award'))
+```
+
+
 ## Filtering Rows
+
+```{r filter}
+my_filtered_data = demographics %>% 
+  filter(age < 40)
+
+my_filtered_data = demographics %>% 
+  filter(libuser == 1)
+```
+
 
 ## Generating new data
 
-## Grouping and Summarizing Operations
+```{r mutate}
+demographics = demographics %>% 
+  mutate(new_age = (age - mean(age, na.rm = T))/sd(age, na.rm = T))   
+```
+
+## Renaming columns
+
+```{r rename1}
+demographics = demographics %>% 
+  rename(age_std = new_age)
+```
+
+```{r rename2}
+demographics %>% 
+  rename_all(toupper) %>% 
+  colnames()
+```
 
 ## Merging
 
+```{r example_joins}
+# same N rows as demos
+left_join(demographics, ids)
 
-### Mutating Joins — inner_join(), left_join(), right_join(), full_join()
+# only ~ 50k rows
+inner_join(demographics, ids) 
+```
 
-### Filtering Joins — semi_join(), anti_join()
+## Exercises
+
+### Selecting and filtering
 
 
+### Generating new data
 
 ## Python examples
+
+Using Python for data science is not far removed from R
+
+Python's main data processing module is `pandas`
+
+
+### Import
+
+```{python py_import, engine.path= '/Users/micl/anaconda3/bin/python'}
+import pandas as pd
+import numpy  as np
+
+demographics = pd.read_csv('data/demos_anonymized.csv')
+ids = pd.read_csv('data/ids_anonymized.csv')
+
+demographics.head()  # show a few lines
+```
+
+### Selecting Columns
+
+```{python py_select}
+# select by name
+demographics[['age', 'award_total_amount']]
+```
+
+
+```{python py_select2}
+# select successive columns
+demographics.loc[:,'libuser':'age']
+```
+
+
+```{python py_select3}
+# select by pattern
+demographics.filter(regex='^award') 
+```
+
+### Filtering Rows
+
+```{python py_filter}
+my_filtered_data = demographics[demographics.libuser == 1]
+np.mean(my_filtered_data.libuser)
+```
+
+### Joins
+
+```{python py_left_join}
+demos_joined = pd.merge(demographics, ids, how='left', on='EMPLID')
+demos_joined
+```
+
+```{python py_left_join2}
+demos_joined = demographics.join(ids, how='left', lsuffix='EMPLID')
+demos_joined.shape
+demos_joined.columns
+```
+
+
+```{python py_inner_join}
+demos_joined = demographics.join(ids, how='inner', lsuffix='EMPLID')
+
+demos_joined.columns
+```
+

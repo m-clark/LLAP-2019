@@ -75,7 +75,9 @@ You'll always be using packages
 
 ## Data Structures
 
-Vectors form the basis of R data structures. Two main types are atomic and lists
+&lt;span class="objclass"&gt;Vectors&lt;/span&gt; form the basis of R data structures
+
+Two main types are &lt;span class="objclass"&gt;atomic&lt;/span&gt; and &lt;span class="objclass"&gt;lists&lt;/span&gt;
 
 
 ```r
@@ -109,7 +111,14 @@ my_data = data.frame(
   id = 1:3,
   name = c('Vernon', 'Ace', 'Cora')
 )
+```
 
+---
+
+## Data Frames
+
+
+```r
 my_data
 ```
 
@@ -130,11 +139,12 @@ class(my_data)
 
 ---
 
+
 ## Importing Data
 
 Typically data is already available...
 
-So Importing data is the first step
+So importing data is the first step
 
 Data may come in various types
 - **text**: csv, tsv, json
@@ -144,6 +154,7 @@ Data may come in various types
 
 ```r
 demographics = read.csv('data/demos_anonymized.csv')
+ids = read.csv('data/ids_anonymized.csv')
 ```
 
 ---
@@ -229,6 +240,8 @@ And of course the &lt;span class="pack"&gt;tidyverse&lt;/span&gt; package itself
 
 ## Selecting Columns
 
+A common step is to subset the data by column
+
 
 ```r
 demographics %&gt;% 
@@ -307,7 +320,7 @@ Similar variants as &lt;span class="func"&gt;mutate&lt;/span&gt;
 
 ## Merging data from different sources
 
-Merging data can takek on a vareity of forms
+Merging data can take on a variety of forms
 
 Mutating Joins:
 - &lt;span class="func"&gt;left_join&lt;/span&gt;
@@ -388,10 +401,10 @@ Filtering Joins:
 
 ```r
 # same N rows as demos
-left_join(demos_anonymized, ids_anonymized)
+left_join(demographics, ids)
 
 # only ~ 50k rows
-inner_join(demos_anonymized, ids_anonymized) 
+inner_join(demographics, ids) 
 ```
 
 

@@ -4,12 +4,34 @@ output:
   html_notebook: 
     highlight: pygments
     theme: sandstone
+    css: other.css
 editor_options: 
   chunk_output_type: inline
 ---
 
+```{r init, echo=FALSE}
+knitr::opts_chunk$set(
+  echo=T, 
+  eval = F,
+  message = F, 
+  warning = F, 
+  comment = NA,
+  R.options=list(width=120), 
+  cache.rebuild=F, 
+  cache=T,
+  fig.align='center', 
+  fig.asp = .7,
+  dev = 'svg', 
+  dev.args=list(bg = 'transparent')
+)
+
+```
 
 ## Setup
+
+What is the `tidyverse`?
+
+The `tidyverse` consists of a few key packages for data import, manipulation, visualization and more.
 
 ```{r setup}
 library(tidyverse)
@@ -35,7 +57,7 @@ class(y)
 
 ## Data Structures
 
-Vectors form the basis of R data structures. Two main types are atomic and lists
+Vectors form the basis of R data structures. Two main types are atomic and lists.
 
 ```{r vector}
 my_vector <- c(1, 2, 3)   # standard vector
@@ -62,12 +84,16 @@ class(my_data)
 
 ## Importing Data
 
+Importing data is usually the first step.
+
 ```{r import, eval=TRUE}
 demographics = read.csv('data/demos_anonymized.csv')
 ids = read.csv('data/ids_anonymized.csv')
 ```
 
 ## Working with Databases
+
+Databases must be connected to, but otherwise are used just like data frames.
 
 ```{r databases, eval=FALSE}
 # requires DBI and RSQLite packages
@@ -81,6 +107,8 @@ copy_to(con, demographics, 'demos')
 
 
 ## Selecting Columns
+
+A common step is to subset the data by column.
 
 ```{r select1}
 demographics %>% 
@@ -101,6 +129,8 @@ demographics %>%
 
 ## Filtering Rows
 
+To filtering data, think of a logical statement, something that can be `TRUE` or `FALSE`.
+
 ```{r filter}
 my_filtered_data = demographics %>% 
   filter(age < 40)
@@ -112,12 +142,16 @@ my_filtered_data = demographics %>%
 
 ## Generating new data
 
+Another very common data processing task is to generate new variables.
+
 ```{r mutate}
 demographics = demographics %>% 
   mutate(new_age = (age - mean(age, na.rm = T))/sd(age, na.rm = T))   
 ```
 
 ## Renaming columns
+
+
 
 ```{r rename1}
 demographics = demographics %>% 
@@ -132,6 +166,8 @@ demographics %>%
 
 ## Merging
 
+Merging data can take on a variety of forms, and depending on the data, can be be quite complicated.
+
 ```{r example_joins}
 # same N rows as demos
 left_join(demographics, ids)
@@ -144,8 +180,32 @@ inner_join(demographics, ids)
 
 ### Selecting and filtering
 
+Use the `:` operator to select successive columns.
+
+```{r ex1a, eval=FALSE}
+colnames(demographics)
+
+demographics %>% 
+  select(?)
+```
+
+Filter the data to award amounts less than 500000.
+
+
+```{r ex1b, eval=FALSE}
+demographics %>% 
+  filter(award_total_amount ?)
+```
 
 ### Generating new data
+
+Generate a new award amount variable that is the log of the original.  Give the new variable a useful name.
+
+```{r ex2, eval=FALSE}
+demographics %>% 
+  mutate(? = log(?))
+```
+
 
 ## Python examples
 
@@ -189,8 +249,24 @@ demographics.filter(regex='^award')
 
 ```{python py_filter}
 my_filtered_data = demographics[demographics.libuser == 1]
-np.mean(my_filtered_data.libuser)
+my_filtered_data.libuser.nunique()
 ```
+
+### Generating new data
+
+```{python py_mutate}
+demographics[['new_age']] = (demographics[['age']] - np.mean(demographics[['age']])) / np.std(demographics[['age']])
+
+demographics.new_age.describe()  # mean = 0  sd = 1
+```
+
+### Renaming columns
+
+```{python py_rename}
+demographics = demographics %>% 
+  rename(age_std = new_age)
+```
+
 
 ### Joins
 

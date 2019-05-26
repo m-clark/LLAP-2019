@@ -94,7 +94,9 @@ You'll always be using packages
 
 ## Data Structures
 
-Vectors form the basis of R data structures. Two main types are atomic and lists
+<span class="objclass">Vectors</span> form the basis of R data structures
+
+Two main types are <span class="objclass">atomic</span> and <span class="objclass">lists</span>
 
 ```{r vector}
 my_vector <- c(1, 2, 3)   # standard vector
@@ -117,18 +119,25 @@ my_data = data.frame(
   id = 1:3,
   name = c('Vernon', 'Ace', 'Cora')
 )
+```
 
+---
+
+## Data Frames
+
+```{r data_frame2, eval=TRUE}
 my_data
 class(my_data)
 ```
 
 ---
 
+
 ## Importing Data
 
 Typically data is already available...
 
-So Importing data is the first step
+So importing data is the first step
 
 Data may come in various types
 - **text**: csv, tsv, json
@@ -221,6 +230,8 @@ And of course the <span class="pack">tidyverse</span> package itself
 
 ## Selecting Columns
 
+A common step is to subset the data by column
+
 ```{r select}
 demographics %>% 
   select(gender, age, libuser)
@@ -295,7 +306,7 @@ Similar variants as <span class="func">mutate</span>
 
 ## Merging data from different sources
 
-Merging data can takek on a vareity of forms
+Merging data can take on a variety of forms
 
 Mutating Joins:
 - <span class="func">left_join</span>

@@ -1,7 +1,7 @@
 ---
-title: "Module 2: Exploring & Summarizing Data"
+title: "Module 2 <br><br> Exploring <br><span style='font-size: 66%'>&</span><br> Summarizing Data"
 author: ""
-date: "`r Sys.Date()`"
+# date: "`r Sys.Date()`"
 output: 
   xaringan::moon_reader:
     lib_dir: libs

@@ -10,6 +10,7 @@ editor_options:
 ---
 
 ```{r init, echo=FALSE}
+# these options are primary useful to the creation of the html document
 knitr::opts_chunk$set(
   echo=T, 
   eval = F,

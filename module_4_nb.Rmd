@@ -1,0 +1,37 @@
+---
+title: "Module 4: More Analytics"
+output: 
+  html_notebook: 
+    highlight: pygments
+    theme: sandstone
+    css: other.css
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r init, echo=FALSE}
+# these options are primary useful to the creation of the html document
+knitr::opts_chunk$set(
+  echo=T, 
+  eval = F,
+  message = F, 
+  warning = F, 
+  comment = NA,
+  R.options=list(width=120), 
+  cache.rebuild=F, 
+  cache=T,
+  fig.align='center', 
+  fig.asp = .7,
+  dev = 'svg', 
+  dev.args=list(bg = 'transparent')
+)
+```
+
+```{r catchup}
+library(tidyverse)
+demographics = read.csv('data/demos_anonymized.csv')
+ids = read.csv('data/ids_anonymized.csv')
+model_variables = read.csv('data/model_variables_anonymized.csv')
+```
+
+## Introduction

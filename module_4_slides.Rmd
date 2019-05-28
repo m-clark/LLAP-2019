@@ -1,5 +1,5 @@
 ---
-title: "Module 4: More Analytics"
+title: "Module 4 <br><br> More Analytics"
 author: ""
 date: "`r Sys.Date()`"
 output: 

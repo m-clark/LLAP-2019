@@ -54,7 +54,7 @@ model_variables = read.csv('data/model_variables_anonymized.csv')
 
 ---
 
-## Quick Summary
+## Get a Quick Summary
 
 It's always a good idea to glance at the data
 
@@ -175,7 +175,7 @@ Visualization can be thought of in a layered fashion
 
 ## More pipes
 
-ggplot2 uses a `+` as a pipe to add layers
+<span class="pack">ggplot2</span> uses a `+` as a pipe to add layers
 
 ```{r ggplot2}
 library(ggplot2)
@@ -239,7 +239,6 @@ Typically used indirectly when geoms are called
 Can be used for more direct control
 
 ```{r ggstats}
-# uses stat_bin_hex
 ggplot(faithful, aes(waiting, eruptions)) +
   geom_point() +
   stat_ellipse()
@@ -251,7 +250,6 @@ ggplot(faithful, aes(waiting, eruptions)) +
 ## Stats
 
 ```{r ggstats2, echo=FALSE, eval=TRUE}
-# uses stat_bin_hex
 ggplot(faithful, aes(waiting, eruptions)) +
   geom_point() +
   stat_ellipse()
@@ -386,42 +384,57 @@ Specific functionality:
 <span class="emph">modes</span>
 - allow for points, lines, text and combinations
 
+<span class="emph">aesthetics</span>
+- variables are denoted with `~`, constants do not use
+- `x =~ var1` vs `x = 2`
+
 
 ---
 
 ## Plotly
 
-```{r plotly}
+```{r plotly, eval=T, out.width='100%'}
 library(plotly)
-midwest %>% 
-  filter(inmetro==T) %>% 
-  plot_ly(x=~percbelowpoverty, y=~percollege) %>% 
-  add_markers()
+
+model_variables %>% 
+  plot_ly(x = ~race, y = ~ age) %>% 
+  add_boxplot(color =~ race)
 ```
 
 ---
 
 ## Plotly
 
-```{r}
-library(mgcv); library(modelr); library(glue)
+```{r plotly1, eval=T, out.width='100%'}
+library(plotly)
 
-mtcars %>% 
-  mutate(amFactor = factor(am, labels=c('auto', 'manual')),
-         hovertext = glue('weight: {wt} <br> mgp:  {mpg} <br> {amFactor}')) %>% 
-  add_predictions(gam(mpg~s(wt, am, bs='fs'), data=mtcars)) %>% 
-  plot_ly() %>%
-  add_markers(x=~wt, 
-              y=~mpg, 
-              color=~amFactor, 
-              opacity=.5, 
-              text=~hovertext, 
-              hoverinfo='text', 
-              showlegend=F) %>% 
-  add_lines(x=~wt, 
-            y=~pred, 
-            color=~amFactor, 
-            name='gam prediction')
+model_variables %>% 
+  group_by(libuser, race) %>% 
+  summarise(award = mean(award_total_amount)) %>% 
+  plot_ly(x = ~libuser, 
+          y = ~award, 
+          color = ~race,
+          text = ~round(award), 
+          textposition = 'auto', 
+          # textcolor = 'gray',
+          type = 'bar') %>% 
+  layout(bargap = 0.25, 
+         bargroupgap = 0.25)
+```
+
+---
+
+## Plotly
+
+```{r plotly2, echo=-(1:3)}
+init = glm(award_total_amount >= 1000000 ~ age*race, 
+           data = model_variables, 
+           family = binomial)
+model_variables %>% 
+  modelr::add_predictions(init, type = 'response') %>% 
+  plot_ly(x = ~age, y = ~ pred) %>% 
+  add_lines(color =~ race, line = list(shape = "spline")) %>% 
+  layout(title = 'Predicted Prob. Award > 1 mil')
 ```
 
 ---
@@ -429,17 +442,45 @@ mtcars %>%
 ## Plotly
 
 
-One of the strengths of plotly is that we can feed a ggplot object to it, and turn our formerly static plots into interactive ones. 
+One of the strengths of <span class="pack">plotly</span> is that we can feed a <span class="objclass">ggplot</span> object to it, and turn our formerly static plots into interactive ones. 
 
-```{r plotly.}
-gp = mtcars %>% 
-  mutate(amFactor = factor(am, labels=c('auto', 'manual')),
-         hovertext = paste(wt, mpg, amFactor)) %>% 
-  arrange(wt) %>% 
-  ggplot(aes(x=wt, y=mpg, color=amFactor)) +
-  geom_smooth(se=F) +
-  geom_point(aes(color=amFactor))
+```{r plotly3}
+model_variables %>% 
+  filter(award_total_amount >= 50000) %>% 
+  ggplot() +
+  geom_density(aes(x = log(award_total_amount), 
+                   color = libuser,
+                   fill = libuser),
+               alpha = .2) + 
+  facet_wrap(~ gender) 
 ggplotly()
 ```
 
 ---
+
+## Plotly
+
+
+```{r plotly4, echo=FALSE, eval=TRUE}
+p = model_variables %>% 
+  filter(award_total_amount >= 50000) %>% 
+  ggplot() +
+  geom_density(aes(x = log(award_total_amount), 
+                   color = libuser,
+                   fill = libuser),
+               alpha = .2) + 
+  facet_wrap(~ gender) 
+ggplotly()
+```
+
+---
+
+## Summary
+
+Summarizing and visualizing data is a key activity throughout the analysis process
+
+Understand your data
+
+Convey results in a meaningful fashion
+
+Take the time to do it well!

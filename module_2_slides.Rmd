@@ -42,6 +42,12 @@ kable_df <- function(..., digits=3) {
 }
 
 rnd = function(x, digits = 3) arm::fround(x, digits = digits)
+
+
+demographics = read.csv('data/demos_anonymized.csv')
+ids = read.csv('data/ids_anonymized.csv')
+model_variables = read.csv('data/model_variables_anonymized.csv')
+
 ```
 
 ## Introduction
@@ -228,16 +234,48 @@ model_variables %>%
 
 We can also use ggplot2 to create statistics we want to visualize
 
+Typically used indirectly when geoms are called
+
+Can be used for more direct control
+
 ```{r ggstats}
-model_variables %>% 
-  ggplot() 
-  stat_density(award_total_amount >= 50000) %>% 
+# uses stat_bin_hex
+ggplot(faithful, aes(waiting, eruptions)) +
+  geom_point() +
+  stat_ellipse()
 ```
 
 
 ---
 
 ## Stats
+
+```{r ggstats2, echo=FALSE, eval=TRUE}
+# uses stat_bin_hex
+ggplot(faithful, aes(waiting, eruptions)) +
+  geom_point() +
+  stat_ellipse()
+```
+
+---
+
+## Scales
+
+Scales are used to add specifications to axes, colors, etc.
+
+```{r scales}
+model_variables %>% 
+  filter(award_total_amount >= 50000) %>% 
+  ggplot() +
+  geom_density(aes(x = award_total_amount, 
+                   color = gender,
+                   fill = gender),
+               alpha = .2) + 
+  scale_x_continuous(breaks = c(1e5, 1e6, 1e7, 1e8), 
+                     trans = 'log') +
+  scale_fill_viridis_d(begin = .25, end = .5) +
+  scale_color_viridis_d(begin = .25, end = .5) 
+```
 
 ---
 
@@ -256,21 +294,54 @@ model_variables %>%
   scale_fill_viridis_d(begin = .25, end = .5) +
   scale_color_viridis_d(begin = .25, end = .5) 
 ```
----
-
-## Scales
-
 
 ---
 
 ## Facets
 
+Facets allow another dimension to plots by group
+
+- <span class="func">facet_grid</span>: returns a matrix of like dimensions
+- <span class="func">facet_wrap</span>: more flexible specification
+
+```{r facets}
+model_variables %>% 
+  filter(award_total_amount >= 50000) %>% 
+  ggplot() +
+  geom_density(aes(x = log(award_total_amount), 
+                   color = libuser,
+                   fill = libuser),
+               alpha = .2) + 
+  facet_wrap(~ gender) 
+```
+
 ---
+
 ## Facets
+
+```{r facets2, echo=FALSE, eval=TRUE}
+model_variables %>% 
+  filter(award_total_amount >= 50000) %>% 
+  ggplot() +
+  geom_density(aes(x = log(award_total_amount), 
+                   color = libuser,
+                   fill = libuser),
+               alpha = .2) + 
+  facet_wrap(~ gender) 
+```
 
 ---
 
 ## Interactivity
+
+Interactivity is a must-have tool for web-based presentation
+
+Use to enhance exploration of the data
+- Not just because one can
+
+Allows for additional dimensions
+
+Even useful for exploring raw data
 
 ---
 
@@ -280,10 +351,13 @@ model_variables %>%
 General 
 
 - [plotly](https://plot.ly/r/)
-  - used also in Python, Matlab, Julia
-  - can convert <span class="pack">ggplot2</span> images to interactive ones (with varying degrees of success)
+  - also used in Python, Matlab, Julia
+  - can convert <span class="pack">ggplot2</span> images to interactive ones
+  
 - [highcharter](http://jkunst.com/highcharter/)
-  - also very general wrapper for highcharts.js and works with some R packages out of the box
+  - general wrapper for highcharts.js 
+  - works with some R packages out of the box
+  
 - [rbokeh](http://hafen.github.io/rbokeh/)
   - like plotly, it also has cross language support
 
@@ -295,8 +369,10 @@ Specific functionality:
 
 - [DT](https://rstudio.github.io/DT/)
   - interactive data tables
+  
 - [leaflet](https://rstudio.github.io/leaflet/)
     - maps with OpenStreetMap
+    
 - [visNetwork](http://datastorm-open.github.io/visNetwork/)
     - Network visualization
     
@@ -304,7 +380,12 @@ Specific functionality:
 
 ## Plotly
 
-plotly has modes, which allow for points, lines, text and combinations. Traces, add_*, work similar to geoms.
+<span class="emph">traces</span>
+- <span class="func">add_*</span>, work similar to geoms
+  
+<span class="emph">modes</span>
+- allow for points, lines, text and combinations
+
 
 ---
 
@@ -319,6 +400,7 @@ midwest %>%
 ```
 
 ---
+
 ## Plotly
 
 ```{r}
@@ -349,7 +431,7 @@ mtcars %>%
 
 One of the strengths of plotly is that we can feed a ggplot object to it, and turn our formerly static plots into interactive ones. 
 
-```{r}
+```{r plotly.}
 gp = mtcars %>% 
   mutate(amFactor = factor(am, labels=c('auto', 'manual')),
          hovertext = paste(wt, mpg, amFactor)) %>% 

@@ -255,11 +255,16 @@ ggplot() +
 
 We can also use ggplot2 to create statistics we want to visualize
 
+Typically used indirectly when geoms are called
+
+Can be used for more direct control
+
 
 ```r
-model_variables %&gt;% 
-  ggplot() 
-  stat_density(award_total_amount &gt;= 50000) %&gt;% 
+# uses stat_bin_hex
+ggplot(faithful, aes(waiting, eruptions)) +
+  geom_point() +
+  stat_ellipse()
 ```
 
 
@@ -267,26 +272,74 @@ model_variables %&gt;%
 
 ## Stats
 
+&lt;img src="module_2_slides_files/figure-html/ggstats2-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Scales
+
+Scales are used to add specifications to axes, colors, etc.
+
+
+```r
+model_variables %&gt;% 
+  filter(award_total_amount &gt;= 50000) %&gt;% 
+  ggplot() +
+  geom_density(aes(x = award_total_amount, 
+                   color = gender,
+                   fill = gender),
+               alpha = .2) + 
+  scale_x_continuous(breaks = c(1e5, 1e6, 1e7, 1e8), 
+                     trans = 'log') +
+  scale_fill_viridis_d(begin = .25, end = .5) +
+  scale_color_viridis_d(begin = .25, end = .5) 
+```
+
 ---
 
 ## Scales
 
 &lt;img src="module_2_slides_files/figure-html/scales2-1.svg" style="display: block; margin: auto;" /&gt;
----
-
-## Scales
-
 
 ---
 
 ## Facets
 
+Facets allow another dimension to plots by group
+
+- &lt;span class="func"&gt;facet_grid&lt;/span&gt;: returns a matrix of like dimensions
+- &lt;span class="func"&gt;facet_wrap&lt;/span&gt;: more flexible specification
+
+
+```r
+model_variables %&gt;% 
+  filter(award_total_amount &gt;= 50000) %&gt;% 
+  ggplot() +
+  geom_density(aes(x = log(award_total_amount), 
+                   color = libuser,
+                   fill = libuser),
+               alpha = .2) + 
+  facet_wrap(~ gender) 
+```
+
 ---
+
 ## Facets
+
+&lt;img src="module_2_slides_files/figure-html/facets2-1.svg" style="display: block; margin: auto;" /&gt;
 
 ---
 
 ## Interactivity
+
+Interactivity is a must-have tool for web-based presentation
+
+Use to enhance exploration of the data
+- Not just because one can
+
+Allows for additional dimensions
+
+Even useful for exploring raw data
 
 ---
 
@@ -296,10 +349,13 @@ model_variables %&gt;%
 General 
 
 - [plotly](https://plot.ly/r/)
-  - used also in Python, Matlab, Julia
-  - can convert &lt;span class="pack"&gt;ggplot2&lt;/span&gt; images to interactive ones (with varying degrees of success)
+  - also used in Python, Matlab, Julia
+  - can convert &lt;span class="pack"&gt;ggplot2&lt;/span&gt; images to interactive ones
+  
 - [highcharter](http://jkunst.com/highcharter/)
-  - also very general wrapper for highcharts.js and works with some R packages out of the box
+  - general wrapper for highcharts.js 
+  - works with some R packages out of the box
+  
 - [rbokeh](http://hafen.github.io/rbokeh/)
   - like plotly, it also has cross language support
 
@@ -311,8 +367,10 @@ Specific functionality:
 
 - [DT](https://rstudio.github.io/DT/)
   - interactive data tables
+  
 - [leaflet](https://rstudio.github.io/leaflet/)
     - maps with OpenStreetMap
+    
 - [visNetwork](http://datastorm-open.github.io/visNetwork/)
     - Network visualization
     
@@ -320,7 +378,12 @@ Specific functionality:
 
 ## Plotly
 
-plotly has modes, which allow for points, lines, text and combinations. Traces, add_*, work similar to geoms.
+&lt;span class="emph"&gt;traces&lt;/span&gt;
+- &lt;span class="func"&gt;add_*&lt;/span&gt;, work similar to geoms
+  
+&lt;span class="emph"&gt;modes&lt;/span&gt;
+- allow for points, lines, text and combinations
+
 
 ---
 
@@ -336,6 +399,7 @@ midwest %&gt;%
 ```
 
 ---
+
 ## Plotly
 
 

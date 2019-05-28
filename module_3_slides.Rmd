@@ -18,3 +18,51 @@ output:
     padding: 1em 4em 1em 4em;
 }
 </style>
+
+# Introduction
+
+Regression
+
+Classiffication
+
+---
+
+
+## Regression Model
+
+---
+
+## Interpretation
+---
+
+## Performance
+---
+
+## Logistic Regression
+
+---
+
+## Interpretation
+---
+
+## Performance
+---
+
+
+## Other common methods
+
+Clustered and longitudinal data
+- Mixed models
+
+Dimension reduction
+- PCA/Factor analysis
+- Cluster analysis
+
+
+---
+
+
+
+# tips tricks
+
+creating model lists

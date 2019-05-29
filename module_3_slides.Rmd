@@ -33,9 +33,11 @@ Classiffication
 ---
 
 ## Interpretation
+
 ---
 
 ## Performance
+
 ---
 
 ## Logistic Regression
@@ -43,9 +45,11 @@ Classiffication
 ---
 
 ## Interpretation
+
 ---
 
 ## Performance
+
 ---
 
 
@@ -54,7 +58,7 @@ Classiffication
 Clustered and longitudinal data
 - Mixed models
 
-Dimension reduction
+Unsupervised methods & Dimension reduction
 - PCA/Factor analysis
 - Cluster analysis
 
@@ -66,3 +70,5 @@ Dimension reduction
 # tips tricks
 
 creating model lists
+
+parallelization

@@ -1,4 +1,4 @@
-
+---
 title: "Module 2: Summarizing and Visualizing Data"
 output: 
   html_notebook: 
@@ -7,7 +7,7 @@ output:
     css: other.css
 editor_options: 
   chunk_output_type: inline
-
+---
 
 ```{r init, echo=FALSE}
 # these options are primary useful to the creation of the html document
@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
   comment = NA,
   R.options=list(width=120), 
   cache.rebuild=F, 
-  cache=T,
+  cache=F,
   fig.align='center', 
   fig.asp = .7,
   dev = 'svg', 
@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r catchup}
+```{r catchup, eval=TRUE}
 library(tidyverse)
 demographics = read.csv('data/demos_anonymized.csv')
 ids = read.csv('data/ids_anonymized.csv')
@@ -89,13 +89,15 @@ map(x, sum)
 
 ## Grouping and Summarizing Operations
 
-We can even do this with modeling and other operations. This extracts the
-coefficients from a model run for each group.
+We can even do this with modeling and other operations. 
+
+This extracts the coefficients from a model run for each group.
 
 ```{r group_by3, eval=TRUE}
-model_variables %>% 
-  group_split(race) %>% 
-  map(~coef(lm(award_total_amount ~ gender, data = .))) 
+demographics %>% 
+  drop_na(race) %>% 
+  group_split(race) %>%   
+  map(~lm(award_total_amount ~ gender, data = .))
 ```
 
 
@@ -120,18 +122,13 @@ The most widely used visualization package in R
 
 Visualization can be thought of in a layered fashion
 
-
-<div style="margin-left: 0%">base</div>
-<div style="margin-left: 10%">main plot</div>
-<div style="margin-left: 20%">options</div>
-    
-
+Start with the base, then build up
 
 ## More pipes
 
 `ggplot2` uses a `+` as a pipe to add layers
 
-```{r ggplot2}
+```{r ggplot2, eval=FALSE}
 library(ggplot2)
 ggplot(data) +
   geom_point(aes(x = var1, y = var2)) +
@@ -154,13 +151,13 @@ We can pipe *to* any ggplot as we did before (` %>% `)
 
 ```{r aesthetics}
 model_variables %>% 
-  filter(award_total_amount >= 50000) %>% 
-ggplot() +
+  filter(award_total_amount > 1e7) %>% 
+  ggplot() +
   geom_density(aes(x = award_total_amount, 
-                   color = gender,
-                   fill = gender),
+                   color = factor(gender),
+                   fill = factor(gender)),
                alpha = .2) + 
-  scale_x_continuous(breaks = c(1e5, 1e6, 1e7, 1e8), trans = 'log')
+  scale_x_continuous(breaks = (1:10) * 1e7, trans = 'log')
 ```
 
 ```{r aesthetics2}
@@ -180,9 +177,9 @@ Typically used indirectly when geoms are called
 Can be used for more direct control
 
 ```{r ggstats2}
-ggplot(faithful, aes(waiting, eruptions)) +
-  geom_point() +
-  stat_ellipse()
+ggplot(model_variables, aes(age, award_total_amount)) +
+  geom_point(alpha = .02) +
+  stat_ellipse(color = '#ff5500')
 ```
 
 
@@ -193,13 +190,13 @@ Scales are used to add specifications to axes, colors, etc.
 
 ```{r scales}
 model_variables %>% 
-  filter(award_total_amount >= 50000) %>% 
+  filter(award_total_amount >= 1e6) %>% 
   ggplot() +
   geom_density(aes(x = award_total_amount, 
                    color = gender,
                    fill = gender),
                alpha = .2) + 
-  scale_x_continuous(breaks = c(1e5, 1e6, 1e7, 1e8), 
+  scale_x_continuous(breaks = c(1e6, 5e6, 1e7, 2.5e7, 5e7), 
                      trans = 'log') +
   scale_fill_viridis_d(begin = .25, end = .5) +
   scale_color_viridis_d(begin = .25, end = .5) 
@@ -215,18 +212,58 @@ Facets allow another dimension to plots by group
 
 ```{r facets}
 model_variables %>% 
-  filter(award_total_amount >= 50000) %>% 
   ggplot() +
-  geom_density(aes(x = log(award_total_amount), 
+  geom_density(aes(x = award_total_amount, 
                    color = libuser,
                    fill = libuser),
-               alpha = .2) + 
-  facet_wrap(~ gender) 
+               alpha = .2) +
+  facet_wrap(~gender)
 ```
 
 
 
 
+## Themes
+
+`Themes` allow for customization
+
+Two uses of a 
+- a built-in versions (e.g. `theme_minimal`)
+- DIY  (`theme`(...))
+
+For the theme function, each argument, takes on a specific value or an element function:
+
+- `element_rect`
+- `element_line`
+- `element_text`
+- `element_blank`
+
+
+## Themes
+
+```{r themes1}
+model_variables %>% 
+  ggplot() +
+  geom_smooth(aes(x = age,
+                y = award_total_amount,
+                color = libuser),
+               alpha = .2) + 
+  theme_minimal()
+```
+
+
+```{r themes2}
+model_variables %>% 
+  ggplot() +
+  geom_smooth(aes(x = age,
+                y = award_total_amount,
+                color = libuser),
+               alpha = .2) + 
+  theme(axis.text.x = element_text(size=12),
+        panel.grid.minor.x = element_blank(),
+        plot.background = element_rect(color = 'rosybrown'),
+        panel.background = element_rect(fill = 'papayawhip'))
+```
 
 ## Interactivity
 
@@ -248,7 +285,7 @@ General
 
 - [plotly](https://plot.ly/r/)
   - also used in Python, Matlab, Julia
-  - can convert <span class="pack">ggplot2</span> images to interactive ones
+  - can convert `ggplot2` images to interactive ones
   
 - [highcharter](http://jkunst.com/highcharter/)
   - general wrapper for highcharts.js 
@@ -276,13 +313,13 @@ Specific functionality:
 
 ## Plotly
 
-<span class="emph">traces</span>
-- <span class="func">add_*</span>, work similar to geoms
+`traces`
+- `add_`, work similar to geoms
   
-<span class="emph">modes</span>
+`modes`
 - allow for points, lines, text and combinations
 
-<span class="emph">aesthetics</span>
+`aesthetics`
 - variables are denoted with `~`, constants do not use
 - `x =~ var1` vs `x = 2`
 
@@ -297,8 +334,8 @@ Plotly uses the standard pipe `%>%`
 library(plotly)
 
 model_variables %>% 
-  plot_ly(x = ~race, y = ~ age) %>% 
-  add_boxplot(color =~ race)
+  plot_ly(x = ~gender, y = ~ age) %>% 
+  add_boxplot(color =~ gender)
 ```
 
 
@@ -309,11 +346,11 @@ model_variables %>%
 library(plotly)
 
 model_variables %>% 
-  group_by(libuser, race) %>% 
+  group_by(libuser, gender) %>% 
   summarise(award = mean(award_total_amount)) %>% 
   plot_ly(x = ~libuser, 
           y = ~award, 
-          color = ~race,
+          color = ~gender,
           text = ~round(award), 
           textposition = 'auto', 
           type = 'bar') %>% 
@@ -326,13 +363,14 @@ model_variables %>%
 ## Plotly
 
 ```{r plotly2}
-init = glm(award_total_amount >= 1000000 ~ age*race, 
+init = glm(award_total_amount >= 5000000 ~ age*libuser, 
            data = model_variables, 
            family = binomial)
+
 model_variables %>% 
   modelr::add_predictions(init, type = 'response') %>% 
   plot_ly(x = ~age, y = ~ pred) %>% 
-  add_lines(color =~ race, line = list(shape = "spline")) %>% 
+  add_lines(color =~ libuser, line = list(shape = "spline")) %>% 
   layout(title = 'Predicted Prob. Award > 1 mil')
 ```
 
@@ -344,7 +382,6 @@ Use ggplotly to turn our formerly static plots into interactive ones.
 
 ```{r plotly3}
 p = model_variables %>% 
-  filter(award_total_amount >= 50000) %>% 
   ggplot() +
   geom_density(aes(x = log(award_total_amount), 
                    color = libuser,
@@ -380,7 +417,7 @@ demographics.describe(include = 'all')
 demographics.describe(include = [np.number])
 ```
 
-```{python py_summary_string0}
+```{python py_summary_string}
 demographics.describe(include = [np.object])
 ```
 
@@ -409,22 +446,15 @@ lib_group.describe()
 ```
 ### Mapping a function
 
-```{python map}
+```{python py_map}
 x = [[1,2,3], [4,5,6], [7,8,9]]
 list(map(np.sum, x))
 ```
 
-```{python map2}
+```{python py_map2}
 demographics.select_dtypes('number').apply(np.mean)
 ```
 
-```{python}
-import plotly
-import plotly.plotly as py
-from plotly.offline import init_notebook_mode
-import plotly.graph_objs as go
-plotly.offline.init_notebook_mode(connected=True)
-```
 
 ### Visualization
 
@@ -452,7 +482,16 @@ year_award_average
 
 
 
-```{python plotly}
+```{python py_plotly_init}
+import plotly
+import plotly.plotly as py
+from plotly.offline import init_notebook_mode
+import plotly.graph_objs as go
+plotly.offline.init_notebook_mode(connected=True)
+```
+
+
+```{python py_plotly}
 y0 = np.random.randn(50)-1
 y1 = np.random.randn(50)+1
 
@@ -469,4 +508,3 @@ py.iplot(data)
 
 ```{python}
 ```
-

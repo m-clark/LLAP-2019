@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
   comment = NA,
   R.options=list(width=120), 
   cache.rebuild=F, 
-  cache=T,
+  cache=F,
   fig.align='center', 
   fig.asp = .7,
   dev = 'svg', 
@@ -35,3 +35,163 @@ model_variables = read.csv('data/model_variables_anonymized.csv')
 ```
 
 ## Introduction
+
+
+## Regression
+
+```{r model1}
+model_1 = lm(award_total_amount ~ libuser, 
+             data = model_variables)
+
+coef(model_1)
+summary(model_1)
+```
+
+Note there are only two fitted values, one for library users and one for the non-users.
+
+```{r fitted}
+fitted(model_1)[1:10]  # first 10 predictions on current data set
+```
+
+Use `modelr` to add them to your data set.
+
+```{r modelr_demo}
+library(modelr) # need to install?
+model_variables %>% 
+  add_predictions(model_1, var = 'Prediction') %>% 
+  group_by(libuser) %>% 
+  summarise(result = mean(Prediction))
+```
+
+The `broom` library also has functionality for many common models.
+
+```{r broom_demo}
+library(broom) # need to install?
+augment(model_1)
+```
+
+Use ggeffects for a quick visual!
+
+```{r plot_regression}
+library(ggeffects) # need to install?
+ggpredict(model_1) %>% 
+  plot()
+```
+
+
+We can assess performance:
+- within a model (e.g. Adjusted $R^2$)
+- by comparing models (e.g. anova test)
+- with prediction on new data (e.g. RMSE)
+
+```{r reg_model_comparison}
+model_2 = lm(award_total_amount ~ libuser + gender, 
+             data = model_variables)
+
+anova(model_1, model_2)
+```
+
+Other approaches (all must be done on same data!):
+
+- Adjusted R^2
+
+```{r adjr2}
+adjr1 = summary(model_1)$adj
+adjr2 = summary(model_2)$adj
+
+round(c(adjr1, adjr2), 2)
+```
+
+**AIC** is uninterpretable on its own, but reflects the *likelihood* of the data given the model and complexity.  When you have multiple AIC values, the lower value is the better model.
+
+```{r aic}
+AIC(model_1, model_2)
+```
+
+
+## Classification
+
+```{r model_logreg}
+model_logreg = glm(award_total_amount > 5e6 ~ age, 
+                   data = model_variables,
+                   family = binomial)
+
+summary(model_logreg)
+```
+
+
+The caret package has a nice function to summarize classification performance via a variety of metrics.
+
+It needs labeled factors to use though.  Often you would have this anyway.
+
+```{r caret}
+library(caret) # need to install?
+
+predictions =  predict(model_logreg) > 0  # same as probability > .5
+predictions = factor(predictions, labels = c('low', 'high'))
+
+target = model_variables$award_total_amount > 5e6
+target = factor(target, labels = c('low', 'high'))
+
+confusionMatrix(predictions, target)
+```
+
+## Python examples
+
+### Init
+
+```{python py_init, engine.path= '/Users/micl/anaconda3/bin/python'}
+import pandas as pd
+import numpy as np
+import statsmodels
+
+
+model_variables = pd.read_csv('data/model_variables_anonymized.csv')
+```
+
+### Statsmodels
+
+`Statsmodels` is Python's attempt to do statistical modeling.  It essentially follows R's formula style.
+
+
+```{python statsmodels}
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+
+# specify the model, then fit
+model_1 = smf.ols('award_total_amount ~ libuser', data=model_variables)
+results_1 = model_1.fit()
+
+# Inspect the results
+print(results_1.summary())
+```
+
+```{python regmodel_2}
+model_2 = smf.ols('award_total_amount ~ libuser + gender', data=model_variables)
+results_2 = model_2.fit()
+
+# Inspect the results
+print(results_2.summary())
+```
+
+```{python model_compare}
+print(sm.stats.anova_lm(results_1, results_2))
+```
+
+
+### Classification
+
+
+```{python logistic}
+model_variables['award_high'] = 1*(model_variables['award_total_amount'] > 5e6) # 1* makes it a numeric
+
+logit_mod = smf.logit('award_high ~ libuser + gender', data = model_variables)
+logit_result = logit_mod.fit()
+
+print(logit_result.summary())
+```
+
+```{python confusion_matrix}
+logit_result.pred_table() / model_variables.shape[0]
+```
+

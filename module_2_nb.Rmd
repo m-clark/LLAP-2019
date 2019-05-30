@@ -458,7 +458,7 @@ demographics.select_dtypes('number').apply(np.mean)
 
 ### Visualization
 
-`matplotlib` is the most common visualization module in Python, though it's fairly dated at this point. As such we'll use a ggplot implementation in python called `plotnine`.
+`matplotlib` is the most common visualization module in Python, though it's fairly dated at this point. As such we'll use a ggplot implementation in Python called `plotnine`.
 
 Unfortunately for plotly, the interactivity makes it unusable within the R notebook (at present), so you may need to switch to Anaconda or other IDE to try other modules like `plotly`.  Even Python users will still use R for easier visualization though, so feel free to do what you like there, then use ggplot etc. in R when the time comes.
 

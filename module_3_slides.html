@@ -45,7 +45,7 @@ Basic model: Our output/target/response `\(y\)` is a function of predictors/cova
 &lt;br&gt;
 
 `$$y \sim b_0 + b_1 \cdot x_1 + b_2 \cdot x_2  \ldots + b_p \cdot x_p+ e$$`
-
+&lt;br&gt;
 Our expected value `\(\hat{y}\)` is based on the model estimates `\(\hat{b}\)`
 &lt;br&gt;
 `$$\hat{y} = \hat{b}_0 + \hat{b}_1 \cdot x_1 + \hat{b}_2 \cdot x_2  \ldots + \hat{b}_p \cdot x_p$$`
@@ -231,13 +231,16 @@ All of the previous assumes a normal distribution for `\(y\)`
 
 In many cases, this is not the best choice.
 
-&lt;span class="emph"&gt;Logistic regression&lt;/span&gt; allows us to classify observations into groups
+&lt;span class="emph"&gt;Logistic regression&lt;/span&gt; is the most common alternative (of many)
+- Binary outcome
+- Allows us to classify observations into groups
 
 ---
 
 ## Interpretation
 
-The conceptual model is the same
+The conceptual model is the same:
+- `\(y\)` is still a function of the covariates `\(x\)`
 - except `\(y\)` is now a binary indicator of class membership
 - the distribution assumed is binomial
 - the variance is predetermined by the binomial distribution

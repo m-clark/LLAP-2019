@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 output: 
   xaringan::moon_reader:
     lib_dir: libs
-    css: xaringan-themer.css
+    css: [xaringan-themer.css, other.css]
     nature:
       highlightStyle: github
       highlightLines: true
@@ -18,3 +18,52 @@ output:
     padding: 1em 4em 1em 4em;
 }
 </style>
+
+## Extensions to standard models
+
+Nonlinear relationships
+- Generalized Additive Models
+- Nonlinear models
+
+Unsupervised methods
+- Clustering/PCA etc.
+
+---
+
+## Extensions to standard models
+
+Text Analysis
+- Sentiment
+- Tagging
+- Topic modeling
+- Word prediction
+
+
+---
+
+## Machine Learning
+
+<span class="emph">Machine learning</span> is an approach to analysis
+
+Focus is almost exclusively on prediction
+
+Performance is assessed on **new** data
+
+
+
+---
+
+## Deep Learning
+
+"AI"
+
+---
+
+
+
+## Network Analysis
+
+---
+
+
+

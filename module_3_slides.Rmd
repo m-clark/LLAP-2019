@@ -69,7 +69,7 @@ Basic model: Our output/target/response $y$ is a function of predictors/covariat
 <br>
 
 $$y \sim b_0 + b_1 \cdot x_1 + b_2 \cdot x_2  \ldots + b_p \cdot x_p+ e$$
-
+<br>
 Our expected value $\hat{y}$ is based on the model estimates $\hat{b}$
 <br>
 $$\hat{y} = \hat{b}_0 + \hat{b}_1 \cdot x_1 + \hat{b}_2 \cdot x_2  \ldots + \hat{b}_p \cdot x_p$$
@@ -210,13 +210,16 @@ $$y \sim  \mathcal{N}(X\beta, \sigma^2)$$
 
 In many cases, this is not the best choice.
 
-<span class="emph">Logistic regression</span> allows us to classify observations into groups
+<span class="emph">Logistic regression</span> is the most common alternative (of many)
+- Binary outcome
+- Allows us to classify observations into groups
 
 ---
 
 ## Interpretation
 
-The conceptual model is the same
+The conceptual model is the same:
+- $y$ is still a function of the covariates $x$
 - except $y$ is now a binary indicator of class membership
 - the distribution assumed is binomial
 - the variance is predetermined by the binomial distribution

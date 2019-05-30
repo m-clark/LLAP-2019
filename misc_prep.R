@@ -25,6 +25,7 @@ summary(lm(amount ~ libuser + gender + age))
 summary(amount)
 # qplot(amount, geom='density')
 amount = scales::rescale(amount, to = c(10000, 10000000))
+
 summary(lm(amount ~ libuser + gender))
 summary(lm(amount ~ libuser + gender + age))
   

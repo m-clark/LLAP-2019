@@ -81,9 +81,10 @@ Standard techniques
 
 ---
 
+
 ## Machine Learning
 
-A hypothetical tree
+A hypothetical decision tree
 
 This would obviously misclassify many
 
@@ -93,23 +94,35 @@ This would obviously misclassify many
 
 &lt;img src="img/tree.png" style="display:block; margin: 0 auto;" width=75%&gt;
 
+---
 
+## Machine Learning
+
+However, if we had a thousand trees...
+
+... we could base our final results on the total output
+
+- e.g. average (regression) or most common (classification) prediction
 
 ---
+
 
 ## Machine Learning
 
 Popular R machine learning frameworks
-- caret
-- mlr
+- &lt;span class="pack"&gt;caret&lt;/span&gt;
+- &lt;span class="pack"&gt;mlr&lt;/span&gt;
 
 ---
 
+
 ## Machine Learning
+
+Data is typically homogenized to have similar inputs for all columns
 
 
 ```r
-library(caret)
+library(caret) 
 set.seed(1234) # so that the indices will be the same when re-run
 trainIndices = createDataPartition(model_variables$libuser, p=.8, list=F)
 
@@ -124,7 +137,7 @@ X_test = model_variables %&gt;%
 
 ## Machine Learning
 
-
+Example with XGBoost
 
 
 ```r
@@ -132,24 +145,30 @@ library(xgboost)
 modelLookup("xgbLinear")
 modelLookup("xgbTree")
 
-xgb_opts = expand.grid(eta=c(.3,.4),
-                       max_depth=c(9, 12),
-                       colsample_bytree=c(.6,.8),
-                       subsample=c(.5,.75,1),
-                       nrounds=100,   # 1000 would be more reasonable, but very time consuming
-                       min_child_weight=1,
-                       gamma=0)
-cv_opts = trainControl(method='cv', number=10)
+xgb_opts = expand.grid(
+  eta = c(.3, .4),
+  max_depth = c(9, 12),
+  colsample_bytree = c(.6, .8),
+  subsample = c(.5, .75, 1),
+  nrounds = 100, # 1000 would be more reasonable, but notably time consuming
+  min_child_weight = 1,
+  gamma = 0
+)
 
-library(doParallel)
-cl = makeCluster(7)
-registerDoParallel(cl)
+cv_opts = trainControl(method='cv', number=10)
 ```
 
+---
+
+## Machine Learning
 
 
 ```r
-set.seed(1234)
+# for parallel processing
+library(doParallel)
+cl = makeCluster(detectCores() - 1)
+registerDoParallel(cl)
+
 results_xgb = train(
   libuser ~ .,
   data = X_train,
@@ -158,19 +177,59 @@ results_xgb = train(
   trControl = cv_opts,
   tuneGrid = xgb_opts
 )
+
 stopCluster(cl)
 
 results_xgb
-save(results_xgb, file='data/results_xgb.RData')
-preds_gb = predict(results_xgb, X_test)
-confusionMatrix(preds_gb, X_test$libuser, positive='yes')
 ```
 
 ---
 
 ## Machine Learning
 
-Caveats:
+
+
+
+
+```r
+preds_gb = predict(results_xgb, X_test)
+confusionMatrix(preds_gb, X_test$libuser, positive='yes')
+```
+
+```
+Confusion Matrix and Statistics
+
+          Reference
+Prediction   no  yes
+       no  2968 1922
+       yes 2028 3081
+                                          
+               Accuracy : 0.605           
+                 95% CI : (0.5953, 0.6146)
+    No Information Rate : 0.5004          
+    P-Value [Acc &gt; NIR] : &lt; 2e-16         
+                                          
+                  Kappa : 0.2099          
+                                          
+ Mcnemar's Test P-Value : 0.09479         
+                                          
+            Sensitivity : 0.6158          
+            Specificity : 0.5941          
+         Pos Pred Value : 0.6031          
+         Neg Pred Value : 0.6070          
+             Prevalence : 0.5004          
+         Detection Rate : 0.3081          
+   Detection Prevalence : 0.5110          
+      Balanced Accuracy : 0.6050          
+                                          
+       'Positive' Class : yes             
+                                          
+```
+
+---
+
+
+## Machine Learning
 
 Machine learning will take time to do well
 - Need a baseline as a comparison
@@ -185,8 +244,8 @@ Many approaches are actually not very good with big data out of the box
 
 ## Deep Learning
 
-Neural nets form the basis of &lt;span class="emph"&gt;deep learning&lt;/span&gt;
-- AI refers to specific applications of deep learning
+Neural networks form the basis of &lt;span class="emph"&gt;deep learning&lt;/span&gt;
+- &lt;span class="emph"&gt;AI&lt;/span&gt; refers to specific applications of of machine learning that employ &lt;span class="emph"&gt;deep learning&lt;/span&gt; techniques
 
 &lt;img src="img/nnet.png" style="display:block; margin: 0 auto;" width=50%&gt;
 
@@ -196,7 +255,7 @@ Neural nets form the basis of &lt;span class="emph"&gt;deep learning&lt;/span&gt
 
 With deep learning, there may be dozens of hidden layers with possibly hundreds of nodes and additional complexities
 
-Typically requires GPU
+Requires GPU for reasonable times
 
 Typically work best for a specific task with consistent data type
 
@@ -209,7 +268,45 @@ Common wrappers include &lt;span class="pack"&gt;keras&lt;/span&gt;, &lt;span cl
 
 ## Network Analysis
 
+.pull-left[
+Graphs
+- nodes and edges
+- directed
+- undirected
+- bipartite
+- weighted
+
+Networks
+- Social, biological, etc.
+
+]
+.pull-right[
+![](https://upload.wikimedia.org/wikipedia/commons/9/9b/Social_Network_Analysis_Visualization.png) 
+&lt;span style="font-size: 20%;"&gt;image courtesy of Wikipedia&lt;/span&gt;
+]
+
 ---
+
+## Network Analysis
+
+Description
+
+- Degree, betweeness, centrality, pagerank
+
+Clusters
+- Community detection algorithms
+
+Models
+- Exponential random graph
+- Bayesian networks
+
+---
+
+## Network Analysis
+
+Demo
+
+`network_analysis.R`
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

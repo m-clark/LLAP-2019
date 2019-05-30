@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
   comment = NA,
   R.options=list(width=120), 
   cache.rebuild=F, 
-  cache=T,
+  cache=F,
   fig.align='center', 
   fig.asp = .7,
   dev = 'svg', 
@@ -104,9 +104,10 @@ Standard techniques
 
 ---
 
+
 ## Machine Learning
 
-A hypothetical tree
+A hypothetical decision tree
 
 This would obviously misclassify many
 
@@ -138,22 +139,34 @@ X2 -> Positive [label = "Female", fontcolor="gray50" fontsize=7.5 color="#00aaff
 
 <img src="img/tree.png" style="display:block; margin: 0 auto;" width=75%>
 
+---
 
+## Machine Learning
+
+However, if we had a thousand trees...
+
+... we could base our final results on the total output
+
+- e.g. average (regression) or most common (classification) prediction
 
 ---
+
 
 ## Machine Learning
 
 Popular R machine learning frameworks
-- caret
-- mlr
+- <span class="pack">caret</span>
+- <span class="pack">mlr</span>
 
 ---
 
+
 ## Machine Learning
 
-```{r preprocess}
-library(caret)
+Data is typically homogenized to have similar inputs for all columns
+
+```{r preprocess, eval=TRUE}
+library(caret) 
 set.seed(1234) # so that the indices will be the same when re-run
 trainIndices = createDataPartition(model_variables$libuser, p=.8, list=F)
 
@@ -162,38 +175,42 @@ X_train = model_variables %>%
 
 X_test = model_variables %>% 
   slice(-trainIndices)
-
 ```
 
 ---
 
 ## Machine Learning
 
+Example with XGBoost
 
-
-```{r xgboost_setup, echo=-21, eval=FALSE}
+```{r xgboost_setup, eval=FALSE}
 library(xgboost)
 modelLookup("xgbLinear")
 modelLookup("xgbTree")
 
-xgb_opts = expand.grid(eta=c(.3,.4),
-                       max_depth=c(9, 12),
-                       colsample_bytree=c(.6,.8),
-                       subsample=c(.5,.75,1),
-                       nrounds=100,   # 1000 would be more reasonable, but very time consuming
-                       min_child_weight=1,
-                       gamma=0)
+xgb_opts = expand.grid(
+  eta = c(.3, .4),
+  max_depth = c(9, 12),
+  colsample_bytree = c(.6, .8),
+  subsample = c(.5, .75, 1),
+  nrounds = 100, # 1000 would be more reasonable, but notably time consuming
+  min_child_weight = 1,
+  gamma = 0
+)
+
 cv_opts = trainControl(method='cv', number=10)
-
-library(doParallel)
-cl = makeCluster(7)
-registerDoParallel(cl)
-
 ```
 
+---
 
-```{r xgboost}
-set.seed(1234)
+## Machine Learning
+
+```{r xgboost, echo=-18}
+# for parallel processing
+library(doParallel)
+cl = makeCluster(detectCores() - 1)
+registerDoParallel(cl)
+
 results_xgb = train(
   libuser ~ .,
   data = X_train,
@@ -202,19 +219,41 @@ results_xgb = train(
   trControl = cv_opts,
   tuneGrid = xgb_opts
 )
+
 stopCluster(cl)
 
 results_xgb
 save(results_xgb, file='data/results_xgb.RData')
-preds_gb = predict(results_xgb, X_test)
-confusionMatrix(preds_gb, X_test$libuser, positive='yes')
 ```
 
 ---
 
 ## Machine Learning
 
-Caveats:
+```{r logreg_comparison, echo=FALSE, eval=TRUE}
+mod_logreg = glm(libuser ~., data = X_train, family = binomial)
+predictions_train = predict(mod_logreg) > 0
+predictions_train = factor(predictions_train, labels = c('no', 'yes'))
+
+predictions_test = predict(mod_logreg, newdata = X_test) > 0
+predictions_test = factor(predictions_test, labels = c('no', 'yes'))
+
+cm_train = confusionMatrix(predictions_train, X_train$libuser)
+cm_test = confusionMatrix(predictions_test, X_test$libuser)
+```
+
+
+```{r echo=-(1:2), eval=TRUE}
+load('data/results_xgb.RData')
+library(caret)
+preds_gb = predict(results_xgb, X_test)
+confusionMatrix(preds_gb, X_test$libuser, positive='yes')
+```
+
+---
+
+
+## Machine Learning
 
 Machine learning will take time to do well
 - Need a baseline as a comparison
@@ -229,8 +268,8 @@ Many approaches are actually not very good with big data out of the box
 
 ## Deep Learning
 
-Neural nets form the basis of <span class="emph">deep learning</span>
-- AI refers to specific applications of deep learning
+Neural networks form the basis of <span class="emph">deep learning</span>
+- <span class="emph">AI</span> refers to specific applications of of machine learning that employ <span class="emph">deep learning</span> techniques
 
 <img src="img/nnet.png" style="display:block; margin: 0 auto;" width=50%>
 
@@ -240,7 +279,7 @@ Neural nets form the basis of <span class="emph">deep learning</span>
 
 With deep learning, there may be dozens of hidden layers with possibly hundreds of nodes and additional complexities
 
-Typically requires GPU
+Requires GPU for reasonable times
 
 Typically work best for a specific task with consistent data type
 
@@ -253,7 +292,43 @@ Common wrappers include <span class="pack">keras</span>, <span class="pack">fast
 
 ## Network Analysis
 
+.pull-left[
+Graphs
+- nodes and edges
+- directed
+- undirected
+- bipartite
+- weighted
+
+Networks
+- Social, biological, etc.
+
+]
+.pull-right[
+![](https://upload.wikimedia.org/wikipedia/commons/9/9b/Social_Network_Analysis_Visualization.png) 
+<span style="font-size: 20%;">image courtesy of Wikipedia</span>
+]
+
 ---
 
+## Network Analysis
 
+Description
+
+- Degree, betweeness, centrality, pagerank
+
+Clusters
+- Community detection algorithms
+
+Models
+- Exponential random graph
+- Bayesian networks
+
+---
+
+## Network Analysis
+
+Demo
+
+`network_analysis.R`
 

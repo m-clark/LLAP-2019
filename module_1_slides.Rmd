@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
   comment = NA,
   R.options=list(width=120), 
   cache.rebuild=F, 
-  cache=T,
+  cache=F,
   fig.align='center', 
   fig.asp = .7,
   dev = 'svg', 

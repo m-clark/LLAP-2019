@@ -1,13 +1,21 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono|Roboto+Condensed|Open+Sans+Condensed:300|Lato|Lora|Fira+Sans|Fira+Code");
 @import url(https://cdn.rawgit.com/tonsky/FiraCode/1.205/distr/fira_code.css);
 
+.remark-slide-content.title-slide {
+    background-color: #002b36;
+}
 
 .title-slide, .title-slide h1, .title-slide h2, .title-slide h3 {
     color: #fdf6e3;
     font-family: 'Josefin Sans', 'Open Sans Condensed', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
-
 }
 
+.remark-slide-content {
+    background-color: #fffff8; /*#fdf6e3;*/
+    font-size: 20px;
+    padding: 1em 4em 1em 4em;
+
+}
 
 body {
   background-color: #fffff8;

@@ -35,3 +35,45 @@ model_variables = read.csv('data/model_variables_anonymized.csv')
 ```
 
 ## Introduction
+
+
+## Python
+
+### Init
+
+```{python py_init, engine.path= '/Users/micl/anaconda3/bin/python'}
+import pandas as pd
+import numpy as np
+import statsmodels
+
+
+model_variables = pd.read_csv('data/model_variables_anonymized.csv')
+```
+
+### Random forest
+
+```{python rf1, eval=F}
+from sklearn.ensemble import RandomForestClassifier
+
+rf = RandomForestClassifier(n_estimators=1000)  # number of trees
+
+rf_opts = {'max_features': np.arange(2,7)}  # tuning parameter
+rf_estimator = GridSearchCV(rf, cv=10, param_grid=rf_opts, n_jobs=4)  # 10-fold cv
+results_rf = rf_estimator.fit(X_train, y_train)  # requires matrices
+```
+
+Inspect the best result over the tuning parameters
+
+```{python rf2, eval=F}
+results_rf.best_score_
+results_rf.best_params_
+```
+
+Test model on new data
+
+```{python rf3, eval=F}
+rf_predict = results_rf.predict(X_test)
+print(metrics.classification_report(y_test, rf_predict))
+```
+
+

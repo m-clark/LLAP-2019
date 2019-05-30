@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
   comment = NA,
   R.options=list(width=120), 
   cache.rebuild=F, 
-  cache=T,
+  cache=F,
   fig.align='center', 
   fig.asp = .7,
   dev = 'svg', 
@@ -482,7 +482,7 @@ model_variables %>%
 
 ## Plotly
 
-```{r plotly1, eval=T, out.width='100%'}
+```{r plotly1, eval=F, out.width='100%'}
 library(plotly)
 
 model_variables %>% 
@@ -493,7 +493,6 @@ model_variables %>%
           color = ~gender,
           text = ~round(award), 
           textposition = 'auto', 
-          # textcolor = 'gray',
           type = 'bar') %>% 
   layout(bargap = 0.25, 
          bargroupgap = 0.25)
@@ -503,7 +502,27 @@ model_variables %>%
 
 ## Plotly
 
-```{r plotly2, echo=-(1:3)}
+```{r plotly1_show, echo=F, eval=T, out.width='100%'}
+library(plotly)
+
+model_variables %>% 
+  group_by(libuser, gender) %>% 
+  summarise(award = mean(award_total_amount)) %>% 
+  plot_ly(x = ~libuser, 
+          y = ~award, 
+          color = ~gender,
+          text = ~round(award), 
+          textposition = 'auto', 
+          type = 'bar') %>% 
+  layout(bargap = 0.25, 
+         bargroupgap = 0.25)
+```
+
+---
+
+## Plotly
+
+```{r plotly2, eval=T, echo=-(1)}
 init = glm(award_total_amount >= 5000000 ~ age*libuser, 
            data = model_variables, 
            family = binomial)

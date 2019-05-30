@@ -91,6 +91,7 @@ You'll always be using packages
 
 
 ---
+
 ## Functions
 
 <span class="func">Functions</span> are special objects
@@ -494,5 +495,3 @@ Getting comfortable with your tool makes it easier
 
 Figure credits: https://github.com/gadenbuie/tidyexplain
 
-
----

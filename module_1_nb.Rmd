@@ -41,7 +41,7 @@ library(tidyverse)
 
 ## Objects and Classes
 
-```{r objects, echo=FALSE}
+```{r objects}
 x = 1:3
 y = 'a'
 z = list(one = x, two = y)
@@ -55,6 +55,20 @@ z
 str(z)
 class(y)
 ```
+
+
+## Functions
+
+A function to show how easy it is to create your own.
+
+```{r function}
+my_sum_times_two <- function(x, y) {
+  2 * sum(x, y)
+}
+
+my_sum_times_two(1, 2)
+```
+
 
 ## Data Structures
 
@@ -73,7 +87,7 @@ my_list
 
 Data frames are a special kind of list, and probably the most commonly used for data science purposes.
 
-```{r data_frame, eval=TRUE}
+```{r data_frame}
 my_data = data.frame(
   id = 1:3,
   name = c('Vernon', 'Ace', 'Cora')
@@ -87,7 +101,7 @@ class(my_data)
 
 Importing data is usually the first step.
 
-```{r import, eval=TRUE}
+```{r import}
 demographics = read.csv('data/demos_anonymized.csv')
 ids = read.csv('data/ids_anonymized.csv')
 ```
@@ -97,7 +111,7 @@ ids = read.csv('data/ids_anonymized.csv')
 Databases must be connected to, but otherwise are used just like data frames.
 
 ```{r databases, eval=FALSE}
-# requires DBI and RSQLite packages
+# requires DBI and RSQLite packages; just for demo
 library(DBI)
 con <- dbConnect(RSQLite::SQLite(), ":memory:")
 # con

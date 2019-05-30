@@ -91,6 +91,24 @@ You'll always be using packages
 
 
 ---
+## Functions
+
+<span class="func">Functions</span> are special objects
+- take an input
+- return a value
+
+We use them to manipulate the objects we create
+- including the output of other functions.
+
+The value can be anything, and is often many things.
+
+```{r function}
+mydata = read_csv('myfile', na = c('', 'NA', '999'), skip = 10)
+summary(myobject)
+```
+
+---
+
 
 
 ## Data Structures

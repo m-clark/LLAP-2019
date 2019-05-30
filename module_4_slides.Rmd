@@ -1,7 +1,5 @@
 ---
 title: "Module 4 <br><br> More Analytics"
-author: ""
-date: "`r Sys.Date()`"
 output: 
   xaringan::moon_reader:
     lib_dir: libs

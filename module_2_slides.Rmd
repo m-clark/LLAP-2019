@@ -7,7 +7,7 @@ output:
     lib_dir: libs
     css: [xaringan-themer.css, other.css]
     nature:
-      highlightStyle: github
+      highlightStyle: tomorrow
       highlightLines: true
       countIncrementalSlides: false
 ---

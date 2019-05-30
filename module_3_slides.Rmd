@@ -44,7 +44,6 @@ kable_df <- function(..., digits=3) {
 
 rnd = function(x, digits = 3) arm::fround(x, digits = digits)
 
-
 demographics = read.csv('data/demos_anonymized.csv')
 ids = read.csv('data/ids_anonymized.csv')
 model_variables = read.csv('data/model_variables_anonymized.csv')
@@ -54,8 +53,11 @@ model_variables = read.csv('data/model_variables_anonymized.csv')
 ## Introduction
 
 Regression
+- Basic model for continuous(-y) target variables 
+
 
 Classification
+- for categorical outcomes
 
 ---
 
@@ -79,14 +81,32 @@ $$\hat{y} = \hat{b}_0 + \hat{b}_1 \cdot x_1 + \hat{b}_2 \cdot x_2  \ldots + \hat
 The coefficients/weights $b$ tell us something about the nature of the relationship of some $x$ to $y$
 
 In a standard linear regression model, they tell us how much $y$ moves, when $x$ moves by 1
+- for categorical variables, this is changing from one level to the next
 
-$e$ represents the things we don't understand that still influence $y$ (residual)
+$e$ represents the things we don't understand that still influence $y$ (residual error)
+- We try to minimize the error in prediction
+
+---
+
+## A Simple Linear Regression
+
+```{r simple_lm, echo=FALSE, eval=TRUE}
+set.seed(123)
+x = runif(100)
+y = 2 + .3*x + rnorm(100, sd=.1)
+# coef(lm(y~x))
+
+ggplot(data.frame(x,y), aes(x,y)) +
+  geom_point() +
+  geom_smooth(method = 'lm', se = F) +
+  annotate(geom ='text', x= .75, y = 1.9, label=  "paste(\"yhat = 2 + .3*x   \", italic(R) ^ 2, \" = .43\")", parse=T) 
+```
 
 ---
 
 ## Example
 
-The basic R formula goes `y ~ x`
+The basic R formula goes `y ~ x + z`
 
 So if we want to see the award amount predicted by whether someone is a library user or not, we'd do the following.
 
@@ -96,14 +116,30 @@ model_1 = lm(award_total_amount ~ libuser,
              data = model_variables)
 ```
 
-With the model object we use things like:
-- <span class="func">summary</span>
-- <span class="func">predict</span>
-- <span class="func">coef</span>
-- <span class="func">fitted</span>
-- <span class="func">residual</span>
+---
+
+## Example
+
+With the model object we use functions like:
+- <span class="func">summary</span>: summarize the model
+- <span class="func">predict</span>: predict with new observations
+- <span class="func">coef</span>: extract coefficients
+- <span class="func">fitted</span>: examine predictions on current data
+- <span class="func">residual</span>: examine errors on current data
 
 ---
+
+## Example
+
+```{r model1_repeat, eval=TRUE}
+model_1 = lm(award_total_amount ~ libuser, 
+             data = model_variables)
+summary(model_1)
+```
+
+
+---
+
 
 ## Example
 
@@ -152,7 +188,9 @@ anova(model_1, model_2)
 
 ## Performance
 
-The following tells us that adding gender significantly improves the model.
+The following tells us that adding gender significantly improves the model
+
+- Adding gender significantly reduced the sum of the squared errors (residual)
 
 ```{r reg_model_comparison2, echo=FALSE, eval=TRUE}
 model_2 = lm(award_total_amount ~ libuser + gender, 
@@ -179,7 +217,7 @@ In many cases, this is not the best choice.
 ## Interpretation
 
 The conceptual model is the same
-- except $y$ is now a binary or other indicator of class membership
+- except $y$ is now a binary indicator of class membership
 - the distribution assumed is binomial
 - the variance is predetermined by the binomial distribution
 
@@ -216,13 +254,13 @@ texreg::htmlreg(model_logreg,
 
 ## Interpretation
 
-```{r logreg_plot}
+```{r logreg_plot, echo=FALSE, eval=TRUE}
 init = ggeffects::ggpredict(model_logreg, terms='age')
 
 ggplot(init, aes(x, predicted)) +
   geom_line() +
   geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .1) + 
-  labs(y = 'Probability \naward is high', x = 'age') + 
+  labs(y = 'Probability \naward is "high"', x = 'age') + 
   theme(axis.title.y = element_text(angle = 0, size=10, hjust = 0))
 ```
 
@@ -248,15 +286,15 @@ mean(target) # guessing
 
 ## Performance
 
-There are many other metrics besides accuracy we could use
+There are many other metrics besides accuracy
 
-Depending on your situation you may prefer others
+Depending on the situation you may prefer others
 
-- Sensitivity (true positive rate)
-- Specificity (true negative rate)
-- Positive Predictive Value
-- Negative Predictive Value
-- Area under a ROC
+- <span class="emph">Sensitivity</span> (true positive rate)
+- <span class="emph">Specificity</span> (true negative rate)
+- <span class="emph">Positive Predictive Value</span>
+- <span class="emph">Negative Predictive Value</span>
+- <span class="emph">Area Under a ROC</span>
 - Many others
 
 
@@ -264,27 +302,69 @@ Depending on your situation you may prefer others
 ---
 
 
-## Other common methods
+## Other common techniques
+
+Including interactions
+- variable effects may depend on other predictors
+
+Generalized Linear Models
+- include the regressions models we've seen 
+- Count models
+- Other distributions
+
+Beyond the GLM family of distributions
+- Beta for data between 0,1
+- Zero-inflated/hurdle models
+
+---
+
+## Other common techniques
 
 Clustered and longitudinal data
 - Mixed models
 
+Spatial
 
+Time Series
 
-Unsupervised methods & Dimension reduction
-- PCA/Factor analysis
+Survival/Event history/Time to event
+
+Dimension reduction & Measurement models
+- PCA
 - Cluster analysis
+- Factor analysis/SEM
+
 
 
 ---
 
 
 
-## tips & tricks
+## Tips & Tricks
 
-Start simply, then build up
+Garbage in, garbage out
+- Data must be worthwhile
+- Spend the necessary time there
+
+Start simply, then build up complexity
+- Don't start with your final model
+- Modeling is similar to debugging
+
+Better programming means more reproducible
+- Better data science
+- More efficient data exploration
+
+---
+
+## Tips & Tricks
 
 Don't fish, p-values are not that important
 
-Creating model lists and apply functions to them
-- Parallelize if needed
+Create lists and apply functions to them
+- Allows for more rapid exploration
+- Speed through parallelization if needed
+
+Rely heavily on visualization 
+- Helps with your own interpretation
+- Engages the audience more than a table of numbers
+

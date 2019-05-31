@@ -7,7 +7,7 @@ Steps
 2. Unzip to a place you have permissions/access to on your own or lab computer.
 
 
-This foloder an RStudio project.  To use it do the following:
+This folder an RStudio project.  To use it do the following:
 
 1. Open RStudio 
 2. Click File - Open Project 

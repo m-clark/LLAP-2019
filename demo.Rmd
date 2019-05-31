@@ -1,0 +1,180 @@
+---
+title: "LLAP Demo"
+description: |
+  How does it all come together? 
+author:
+  - name: Michael Clark 
+    url: https://m-clark.github.io
+    affiliation: CSCAR
+    affiliation_url: https://cscar.research.umich.edu/
+date: "`r Sys.Date()`"
+output: 
+  distill::distill_article:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+# install.packages(c("distill", 'huxtable', 'devtools', 'kableExtra', 'ggeffects'))
+# 
+# devtools::install_github('m-clark/visibly')
+# devtools::install_github('m-clark/tidyext')
+
+knitr::opts_chunk$set(
+  echo = F, 
+  eval = T,
+  message = F, 
+  warning = F, 
+  comment = NA,
+  R.options = list(width = 120),
+  cache.rebuild = F,
+  cache = F,
+  fig.align = 'center', 
+  fig.asp = .7,
+  dev = 'svg', 
+  dev.args = list(bg = 'transparent')
+)
+
+library(tidyverse); library(broom); library(kableExtra); library(visibly)
+
+kable_df <- function(..., digits=3) {
+  kable(..., digits=digits) %>% 
+    kable_styling(full_width = F)
+}
+
+rnd = function(x, digits = 3) arm::fround(x, digits = digits)
+```
+
+```{r init}
+library(tidyverse)
+library(mgcv)
+```
+
+
+## Introduction
+
+A key idea for 'putting it all together' is *reproducibility*.  The more you think about doing something in a way that can be done again and produce the same result, the better you'll be off.  A good way to do this is to forgo the standard R script and just start writing.
+
+## Getting Started
+
+Let's model some data.  This data is similar to what you've seen.
+
+```{r load_data}
+load('demo.RData')
+```
+
+
+Generally we want to describe the data first.  I'll use a custom function to create a nice summary table for the  variables.
+
+```{r init-describe}
+init = tidyext::describe_all(model_variables_demo)
+```
+
+
+First we'll start with a table for the numeric data.
+
+```{r describe-num}
+kable_df(init$`Numeric Variables`, digits = 1, caption = 'Numeric Variables')
+```
+
+
+That was easy! Here are some nice tables for categorical variables.
+
+```{r describe-cat}
+libcat = init$`Categorical Variables` %>% filter(Variable == 'libuser')
+
+kable_df(libcat %>% select(-Variable), digits = 1, caption = 'Library Users')
+```
+
+```{r gendercat}
+gendercat = init$`Categorical Variables` %>% filter(Variable == 'gender')
+
+kable_df(gendercat %>% select(-Variable), digits = 1, caption = 'Gender')
+```
+
+
+And I haven't had to spend any time formatting.  Plus, if the data changes, I won't take any more effort to reproduce those tables.  And I can reference them easily, like for Table \@ref(tab:describe-cat).
+
+Why not a quick visualization?  I'll add some color but use a palette that is both colorblind safe and okay if printed in black and white. I'll add a caption via the chunk options.
+
+```{r visage, fig.cap='Age-Award Relationship'}
+ggplot(model_variables_demo) +
+  geom_point(aes(x = age, y = award_total_amount, color = gender), alpha = .15) +
+  scale_color_viridis_d(begin = .25, end = .75, option = 'C') +
+  theme_minimal()
+```
+
+<aside>Here's a density plot for age.  A margin is a good place to put related info that isn't critical to the main content. 
+
+```{r aside-demo}
+ggplot(model_variables_demo) +
+  geom_density(aes(x = age))
+```
+</aside>
+
+Again, no cut and paste, the figures will be reflective of the data no matter what the data is.
+
+Let's put one out to the margin, just because we can.  If someone views this doc on a small screen, it'll just slide to the middle.
+
+Let's get on to modeling.
+
+## Modeling
+
+A good approach in modeling is to start with a small but viable model and expanding from there.  You should always have more than one idea to test, plus some exploration, because your great ideas might not cover all the ground the data has to offer.
+
+We can start with a standard regression model.  It's highly interpretable, but may be too simple for our needs.  As before, I can use various tools to create a practically publish-ready table without doing much.
+
+```{r lm}
+model_lm = lm(award_total_amount ~ libuser + gender + age, 
+              data = model_variables_demo)
+
+broom::tidy(model_lm) %>% 
+  kable_df(caption = 'Model Results')
+```
+
+Or like this.  We'll add interactions to compare.
+
+```{r lm2, results='asis'}
+model_lm_inter = lm(award_total_amount ~ (libuser + gender)*age, 
+              data = model_variables_demo)
+texreg::htmlreg(list(model_lm, model_lm_inter), 
+                single.row = T, 
+                digits = 2, 
+                indentation = ' ', 
+                doctype = F,
+                caption = 'Model Comparison',
+                caption.above = T)
+```
+
+
+Now we'll run a model with some more interesting ('wiggly'!) relationships.  Interpretation becomes different, but not necessarily more difficult.  It will just reflect the complexity of the data  more appropriately.
+
+```{r gam}
+library(mgcv)
+model_gam = gam(award_total_amount ~ libuser + gender + s(age, by = libuser), 
+                data = model_variables_demo)
+```
+
+As an example we can visualize the age effect, which was allowed to be curvilinear and interact with library use.  We can see that the relationship of age to award is more nuanced for library users.
+
+```{r gam_vis}
+library(ggeffects)
+gam_preds = ggpredict(model_gam, terms = c('age', 'libuser'))
+plot(gam_preds) +
+  labs(y = 'Award', x = 'Age', title = 'Relationship of age and library use to award amount') +
+  theme(axis.title.y = element_text(angle = 0, vjust = .90),
+        title = element_text(size = 8, color = 'gray25'))
+```
+
+We can choose the best model via AIC, and I can determine which model is best, and make the text reflect that in an automatic fashion.
+
+```{r bestmod}
+bestmod = which.min(sapply(list(model_lm, model_lm_inter, model_gam), AIC))
+```
+
+
+The best model is the `r c('first', 'second', 'third')[bestmod]` one.  And even that sentence is reproducible to some extent.  A goal would be to have any number, or other text based on data to be code-driven, rather than cut and pasted or entered raw.
+
+## Summary
+
+Data processing will typically take up most of your time.  Modeling likewise should be done carefully.  Tools are available to make things easier for you, and lots of people make their efforts publicly available for others to use.  With a few key packages/modules, a little programming experience, and some luck, you can go very far with your data exploration!

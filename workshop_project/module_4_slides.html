@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Module 4    More Analytics</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="other.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Module 4 <br><br> More Analytics
+
+---
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 30px;
+    padding: 1em 4em 1em 4em;
+}
+&lt;/style&gt;
+
+
+
+
+
+## Extensions to standard models
+
+Nonlinear relationships
+- Generalized Additive Models
+- Nonlinear models (e.g. `\(y \sim a\cdot e^{b\cdot x}\)`)
+
+Unsupervised methods
+- Clustering/PCA etc.
+
+---
+
+## Extensions to standard models
+
+Text Analysis
+- Sentiment
+- Tagging
+- Topic modeling
+- Word prediction
+
+Penalized Regression
+- Lasso, Ridge, Elasticnet
+
+
+---
+
+## Machine Learning
+
+&lt;span class="emph"&gt;Machine learning&lt;/span&gt; is an **approach** to data analysis
+- Focus is almost exclusively on prediction
+- Performance is assessed on **new** data
+
+Any method can be used for machine learning
+
+Performance greater for ML, but interepretation, if even desired, can be more challenging
+
+---
+
+## Machine Learning
+
+Standard methods
+
+- Penalized regression (a starting point)
+- Random forests and boosted trees (e.g. XGBoost)
+- Neural nets
+- Large scale graphical modeling (e.g. networks)
+
+Standard techniques
+
+- Data pre-processing
+- Parameter tuning
+- Cross-validation
+- Combining models
+
+---
+
+
+## Machine Learning
+
+A hypothetical decision tree
+
+This would obviously misclassify many
+
+
+
+
+
+&lt;img src="img/tree.png" style="display:block; margin: 0 auto;" width=75%&gt;
+
+---
+
+## Machine Learning
+
+However, if we had a thousand trees...
+
+... we could base our final results on the total output
+
+- e.g. average (regression) or most common (classification) prediction
+
+---
+
+
+## Machine Learning
+
+Popular R machine learning frameworks
+- &lt;span class="pack"&gt;caret&lt;/span&gt;
+- &lt;span class="pack"&gt;mlr&lt;/span&gt;
+
+---
+
+
+## Machine Learning
+
+Data is typically homogenized to have similar inputs for all columns
+
+
+```r
+library(caret) 
+set.seed(1234) # so that the indices will be the same when re-run
+trainIndices = createDataPartition(model_variables$libuser, p=.8, list=F)
+
+X_train = model_variables %&gt;% 
+  slice(trainIndices)
+
+X_test = model_variables %&gt;% 
+  slice(-trainIndices)
+```
+
+---
+
+## Machine Learning
+
+Example with XGBoost
+
+
+```r
+library(xgboost)
+xgb_opts = expand.grid(
+  eta = c(.3, .4),
+  max_depth = c(9, 12),
+  colsample_bytree = c(.6, .8),
+  subsample = c(.5, .75, 1),
+  nrounds = 100, # 1000 would be more reasonable, but notably time consuming
+  min_child_weight = 1,
+  gamma = 0
+)
+
+cv_opts = trainControl(method='cv', number=10)
+```
+
+---
+
+## Machine Learning
+
+
+```r
+# for parallel processing
+library(doParallel)
+cl = makeCluster(detectCores() - 1)
+registerDoParallel(cl)
+
+results_xgb = train(
+  libuser ~ .,
+  data = X_train,
+  method = 'xgbTree',
+  preProcess = c('center', 'scale'),
+  trControl = cv_opts,
+  tuneGrid = xgb_opts
+)
+
+stopCluster(cl)
+
+results_xgb
+```
+
+---
+
+## Machine Learning
+
+
+
+
+
+```r
+preds_gb = predict(results_xgb, X_test)
+confusionMatrix(preds_gb, X_test$libuser, positive='yes')
+```
+
+```
+Confusion Matrix and Statistics
+
+          Reference
+Prediction   no  yes
+       no  3276 2271
+       yes 1726 2727
+                                          
+               Accuracy : 0.6003          
+                 95% CI : (0.5906, 0.6099)
+    No Information Rate : 0.5002          
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+                                          
+                  Kappa : 0.2006          
+                                          
+ Mcnemar's Test P-Value : &lt; 2.2e-16       
+                                          
+            Sensitivity : 0.5456          
+            Specificity : 0.6549          
+         Pos Pred Value : 0.6124          
+         Neg Pred Value : 0.5906          
+             Prevalence : 0.4998          
+         Detection Rate : 0.2727          
+   Detection Prevalence : 0.4453          
+      Balanced Accuracy : 0.6003          
+                                          
+       'Positive' Class : yes             
+                                          
+```
+
+---
+
+
+## Machine Learning
+
+Machine learning will take time to do well
+- Need a baseline as a comparison
+
+Payoff may be minimal compared to well-done standard methods that can handle data complexities
+- Simply getting a good result is not enough
+
+Many approaches are actually not very good with big data out of the box
+
+
+---
+
+## Deep Learning
+
+Neural networks form the basis of &lt;span class="emph"&gt;deep learning&lt;/span&gt;
+- &lt;span class="emph"&gt;AI&lt;/span&gt; refers to specific applications of of machine learning that employ &lt;span class="emph"&gt;deep learning&lt;/span&gt; techniques
+
+&lt;img src="img/nnet.png" style="display:block; margin: 0 auto;" width=50%&gt;
+
+---
+
+## Deep Learning
+
+With deep learning, there may be dozens of hidden layers with possibly hundreds of nodes and additional complexities
+
+Requires GPU for reasonable times
+
+Typically work best for a specific task with consistent data type
+
+
+Common frameworks include &lt;span class="pack"&gt;tensorflow&lt;/span&gt;, &lt;span class="pack"&gt;pytorch&lt;/span&gt;, etc.
+
+Common wrappers include &lt;span class="pack"&gt;keras&lt;/span&gt;, &lt;span class="pack"&gt;fastai&lt;/span&gt;, &lt;span class="pack"&gt;scikit-learn&lt;/span&gt;, etc.
+
+---
+
+## Network Analysis
+
+.pull-left[
+Graphs
+- nodes and edges
+- directed
+- undirected
+- bipartite
+- weighted
+
+Networks
+- Social, biological, etc.
+
+]
+.pull-right[
+![](https://upload.wikimedia.org/wikipedia/commons/9/9b/Social_Network_Analysis_Visualization.png) 
+&lt;span style="font-size: 20%;"&gt;image courtesy of Wikipedia&lt;/span&gt;
+]
+
+---
+
+## Network Analysis
+
+Description
+
+- Degree, betweeness, centrality, pagerank
+
+Clusters
+- Community detection algorithms
+
+Models
+- Exponential random graph
+- Bayesian networks
+
+---
+
+## Network Analysis
+
+Demo
+
+`network_analysis.R`
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

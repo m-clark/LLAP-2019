@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Module 3    Introductory Analytics</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="other.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Module 3 <br><br> Introductory Analytics
+
+---
+
+
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 30px;
+    padding: 1em 4em 1em 4em;
+}
+&lt;/style&gt;
+
+
+
+
+## Introduction
+
+Regression
+- Basic model for continuous(-y) target variables 
+
+
+Classification
+- for categorical outcomes
+
+---
+
+
+## Regression Model
+
+Basic model: Our output/target/response `\(y\)` is a function of predictors/covariates/features `\(x\)`
+
+&lt;br&gt;
+
+`$$y \sim b_0 + b_1 \cdot x_1 + b_2 \cdot x_2  \ldots + b_p \cdot x_p+ e$$`
+&lt;br&gt;
+Our expected value `\(\hat{y}\)` is based on the model estimates `\(\hat{b}\)`
+&lt;br&gt;
+`$$\hat{y} = \hat{b}_0 + \hat{b}_1 \cdot x_1 + \hat{b}_2 \cdot x_2  \ldots + \hat{b}_p \cdot x_p$$`
+
+---
+
+## Interpretation
+
+The coefficients/weights `\(b\)` tell us something about the nature of the relationship of some `\(x\)` to `\(y\)`
+
+In a standard linear regression model, they tell us how much `\(y\)` moves, when `\(x\)` moves by 1
+- for categorical variables, this is changing from one level to the next
+
+`\(e\)` represents the things we don't understand that still influence `\(y\)` (residual error)
+- We try to minimize the error in prediction
+
+---
+
+## A Simple Linear Regression
+
+&lt;img src="module_3_slides_files/figure-html/simple_lm-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Example
+
+The basic R formula goes `y ~ x + z`
+
+So if we want to see the award amount predicted by whether someone is a library user or not, we'd do the following.
+
+
+
+```r
+model_1 = lm(award_total_amount ~ libuser, 
+             data = model_variables)
+```
+
+---
+
+## Example
+
+With the model object we use functions like:
+- &lt;span class="func"&gt;summary&lt;/span&gt;: summarize the model
+- &lt;span class="func"&gt;predict&lt;/span&gt;: predict with new observations
+- &lt;span class="func"&gt;coef&lt;/span&gt;: extract coefficients
+- &lt;span class="func"&gt;fitted&lt;/span&gt;: examine predictions on current data
+- &lt;span class="func"&gt;residual&lt;/span&gt;: examine errors on current data
+
+---
+
+## Example
+
+
+```r
+model_1 = lm(award_total_amount ~ libuser, 
+             data = model_variables)
+summary(model_1)
+```
+
+```
+
+Call:
+lm(formula = award_total_amount ~ libuser, data = model_variables)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-4744400  -834374     -453   833036  5015012 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  4754400       7751  613.36   &lt;2e-16 ***
+libuseryes    587764      10964   53.61   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1226000 on 49998 degrees of freedom
+Multiple R-squared:  0.05435,	Adjusted R-squared:  0.05433 
+F-statistic:  2874 on 1 and 49998 DF,  p-value: &lt; 2.2e-16
+```
+
+
+---
+
+
+## Example
+
+&lt;div style='font-size:60%'&gt;
+
+The following shows that becoming a libuser will increase the amount.
+
+The standard error (in parenthesis) gives us some idea of the uncertainty in the coefficient.
+
+The p-value suggests this is a statistically significant effect.
+&lt;br&gt;
+
+&lt;/div&gt;
+
+&lt;span style="height: 150%"&gt;&lt;/span&gt;
+
+
+&lt;table cellspacing="0" align="center" style="border: none;"&gt;
+&lt;tr&gt;
+&lt;th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"&gt;&lt;b&gt;&lt;/b&gt;&lt;/th&gt;
+&lt;th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"&gt;&lt;b&gt;Model 1&lt;/b&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;(Intercept)&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;4754399.55 (7751.43)&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;libuseryes&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;587763.97 (10964.37)&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="border-top: 1px solid black;"&gt;R&lt;sup style="vertical-align: 0px;"&gt;2&lt;/sup&gt;&lt;/td&gt;
+&lt;td style="border-top: 1px solid black;"&gt;0.05&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;Adj. R&lt;sup style="vertical-align: 0px;"&gt;2&lt;/sup&gt;&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;0.05&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;Num. obs.&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;50000&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="border-bottom: 2px solid black;"&gt;RMSE&lt;/td&gt;
+&lt;td style="border-bottom: 2px solid black;"&gt;1225853.63&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;" colspan="3"&gt;&lt;span style="font-size:0.8em"&gt;&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;p &amp;lt; 0.001, &lt;sup style="vertical-align: 0px;"&gt;**&lt;/sup&gt;p &amp;lt; 0.01, &lt;sup style="vertical-align: 0px;"&gt;*&lt;/sup&gt;p &amp;lt; 0.05&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+
+
+---
+
+## Performance
+
+We can assess performance:
+- within a model (e.g. Adjusted `\(R^2\)`)
+- by comparing models (e.g. anova test)
+- with prediction on new data (e.g. RMSE)
+
+
+```r
+model_2 = lm(award_total_amount ~ libuser + gender, 
+             data = model_variables)
+
+anova(model_1, model_2)
+```
+
+
+---
+
+## Performance
+
+The following tells us that adding gender significantly improves the model
+
+- Adding gender significantly reduced the sum of the squared errors (residual)
+
+
+```
+Analysis of Variance Table
+
+Model 1: award_total_amount ~ libuser
+Model 2: award_total_amount ~ libuser + gender
+  Res.Df        RSS Df  Sum of Sq     F    Pr(&gt;F)    
+1  49998 7.5133e+16                                  
+2  49997 5.9442e+16  1 1.5691e+16 13197 &lt; 2.2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+
+---
+
+## Classification
+
+All of the previous assumes a normal distribution for `\(y\)`
+
+`$$y \sim  \mathcal{N}(X\beta, \sigma^2)$$`
+
+In many cases, this is not the best choice.
+
+&lt;span class="emph"&gt;Logistic regression&lt;/span&gt; is the most common alternative (of many)
+- Binary outcome
+- Allows us to classify observations into groups
+
+---
+
+## Interpretation
+
+The conceptual model is the same:
+- `\(y\)` is still a function of the covariates `\(x\)`
+- except `\(y\)` is now a binary indicator of class membership
+- the distribution assumed is binomial
+- the variance is predetermined by the binomial distribution
+
+Raw coefficients are interpreted the same...
+
+... but they don't reflect the observed 0-1 outcome
+
+Instead they regard an underlying continuum between the two classes, which is then converted to the probability of being in one of the classes
+
+---
+
+## Example
+
+
+```r
+model_logreg = glm(award_total_amount &gt; 5e6 ~ age, 
+                   data = model_variables,
+                   family = binomial)
+```
+
+
+
+&lt;table cellspacing="0" align="center" style="border: none;"&gt;
+&lt;tr&gt;
+&lt;th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"&gt;&lt;b&gt;&lt;/b&gt;&lt;/th&gt;
+&lt;th style="text-align: left; border-top: 2px solid black; border-bottom: 1px solid black; padding-right: 12px;"&gt;&lt;b&gt;Model 1&lt;/b&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;(Intercept)&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;-6.90 (0.09)&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;age&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;0.13 (0.00)&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="border-top: 1px solid black;"&gt;AIC&lt;/td&gt;
+&lt;td style="border-top: 1px solid black;"&gt;61591.16&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;BIC&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;61608.79&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;Log Likelihood&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;-30793.58&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;Deviance&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;61587.16&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="border-bottom: 2px solid black;"&gt;Num. obs.&lt;/td&gt;
+&lt;td style="border-bottom: 2px solid black;"&gt;50000&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style="padding-right: 12px; border: none;" colspan="3"&gt;&lt;span style="font-size:0.8em"&gt;&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;p &amp;lt; 0.001, &lt;sup style="vertical-align: 0px;"&gt;**&lt;/sup&gt;p &amp;lt; 0.01, &lt;sup style="vertical-align: 0px;"&gt;*&lt;/sup&gt;p &amp;lt; 0.05&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+
+---
+
+## Interpretation
+
+&lt;img src="module_3_slides_files/figure-html/logreg_plot-1.svg" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+## Performance
+
+With classification we are often interested in accuracy.
+
+If we classify any observation with a probability &gt; .5 as being 'high', how well do we match our target variable?
+
+
+```r
+model_prediction = predict(model_logreg, type = 'response') &gt; .5
+target = model_variables$award_total_amount &gt; 5e6
+
+mean(model_prediction == target)
+mean(target) # guessing
+```
+
+
+---
+
+## Performance
+
+There are many other metrics besides accuracy
+
+Depending on the situation you may prefer others
+
+- &lt;span class="emph"&gt;Sensitivity&lt;/span&gt; (true positive rate)
+- &lt;span class="emph"&gt;Specificity&lt;/span&gt; (true negative rate)
+- &lt;span class="emph"&gt;Positive Predictive Value&lt;/span&gt;
+- &lt;span class="emph"&gt;Negative Predictive Value&lt;/span&gt;
+- &lt;span class="emph"&gt;Area Under a ROC&lt;/span&gt;
+- Many others
+
+
+
+---
+
+
+## Other common techniques
+
+Including interactions
+- variable effects may depend on other predictors
+
+Generalized Linear Models
+- include the regressions models we've seen 
+- Count models
+- Other distributions
+
+Beyond the GLM family of distributions
+- Beta for data between 0,1
+- Zero-inflated/hurdle models
+
+---
+
+## Other common techniques
+
+Clustered and longitudinal data
+- Mixed models
+
+Spatial
+
+Time Series
+
+Survival/Event history/Time to event
+
+Dimension reduction &amp; Measurement models
+- PCA
+- Cluster analysis
+- Factor analysis/SEM
+
+
+
+---
+
+
+
+## Tips &amp; Tricks
+
+Garbage in, garbage out
+- Data must be worthwhile
+- Spend the necessary time there
+
+Start simply, then build up complexity
+- Don't start with your final model
+- Modeling is similar to debugging
+
+Better programming means more reproducible
+- Better data science
+- More efficient data exploration
+
+---
+
+## Tips &amp; Tricks
+
+Don't fish, p-values are not that important
+
+Create lists and apply functions to them
+- Allows for more rapid exploration
+- Speed through parallelization if needed
+
+Rely heavily on visualization 
+- Helps with your own interpretation
+- Engages the audience more than a table of numbers
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "tomorrow",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

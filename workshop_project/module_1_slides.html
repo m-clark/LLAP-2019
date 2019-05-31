@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Module 1    Dealing with Data</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="other.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Module 1 <br><br> Dealing with Data
+
+---
+
+
+&lt;!-- Make default font bigger --&gt;
+&lt;style type="text/css"&gt;
+.remark-slide-content {
+    font-size: 30px;
+}
+&lt;/style&gt;
+
+
+
+## Introduction
+
+Dealing with data is challenging
+
+Most of your time may be spent here
+- More time  = Better analysis
+
+Want data you can feel confident about
+
+---
+
+## Objects and Classes
+
+Everything you use in R is an &lt;span class="emph"&gt;object&lt;/span&gt; 
+- of a certain &lt;span class="emph"&gt;class&lt;/span&gt;
+
+Objects can be anything:
+- a single value
+- a function
+- a vector of values
+- a data frame/table
+- a list of 1000 models
+
+*Anything!*
+
+
+```r
+x = 1:3
+y = 'a'
+z = list(one = x, two = y)
+```
+
+---
+
+## Packages
+
+Base R is a fully functioning data science environment
+
+Packages add a lot of additional functionality
+- easier programming
+- fancier analysis
+- better visualization
+
+You'll always be using packages
+
+
+---
+
+## Functions
+
+&lt;span class="func"&gt;Functions&lt;/span&gt; are special objects
+- take an input
+- return a value
+
+We use them to manipulate the objects we create
+- including the output of other functions.
+
+The value can be anything, and is often many things.
+
+
+```r
+mydata = read_csv('myfile', na = c('', 'NA', '999'), skip = 10)
+summary(myobject)
+```
+
+---
+
+
+
+## Data Structures
+
+&lt;span class="objclass"&gt;Vectors&lt;/span&gt; form the basis of R data structures
+
+Two main types are &lt;span class="objclass"&gt;atomic&lt;/span&gt; and &lt;span class="objclass"&gt;lists&lt;/span&gt;
+
+
+```r
+my_vector &lt;- c(1, 2, 3)   # standard vector
+```
+
+
+```r
+my_list &lt;- list(a = 1, b = 2)   # a named list
+my_list
+```
+
+```
+$a
+[1] 1
+
+$b
+[1] 2
+```
+
+---
+
+## Data Frames
+
+Data frames are a special kind of list
+- The most commonly used for most data science
+
+
+```r
+my_data = data.frame(
+  id = 1:3,
+  name = c('Vernon', 'Ace', 'Cora')
+)
+```
+
+---
+
+## Data Frames
+
+
+```r
+my_data
+```
+
+```
+  id   name
+1  1 Vernon
+2  2    Ace
+3  3   Cora
+```
+
+```r
+class(my_data)
+```
+
+```
+[1] "data.frame"
+```
+
+---
+
+
+## Importing Data
+
+Typically data is already available...
+
+So importing data is the first step
+
+Data may come in various types
+- **text**: csv, tsv, json
+- **database**: SQL, MongoDB
+- **proprietary**: Excel, SAS
+
+
+```r
+demographics = read.csv('data/demos_anonymized.csv')
+ids = read.csv('data/ids_anonymized.csv')
+```
+
+---
+
+## Working with Databases
+
+Databases must be connected to
+
+But otherwise are used just like data frames
+
+Not all &lt;span class="pack"&gt;dplyr&lt;/span&gt; operations will translate
+- The most common ones will though
+- And it will work across SQL flavors
+- And it allows one to stay within the R world
+
+
+```r
+library(DBI)
+con &lt;- dbConnect(RSQLite::SQLite(), ":memory:")
+# con
+
+copy_to(con, demographics, 'demos')
+```
+
+---
+
+## Working with Databases
+
+
+```r
+demos_db &lt;- tbl(con, "demos")
+
+demos_db %&gt;% 
+  filter(award_total_amount &gt; 100000) %&gt;% 
+  show_query()
+```
+
+```
+&lt;SQL&gt;
+SELECT *
+FROM `demos`
+WHERE (`award_total_amount` &gt; 100000.0)
+```
+
+
+---
+
+
+## Using SQL directly in an R Notebook
+
+If you already have an SQL database and want to use SQL directly, this can be done with R Markdown
+
+```
+SELECT "year", "month", "libuser"
+SUM(CASE WHEN ("libuser" = 'yes') 
+    THEN (1.0) ELSE (0.0) END) AS "subscribe",
+COUNT(*) AS "total"
+FROM ("demos") 
+GROUP BY "year", "month"
+```
+
+
+
+---
+
+## Data Processing 
+
+What is the tidyverse?
+
+The tidyverse consists of a few key packages:
+
+- &lt;span class="pack"&gt;ggplot2&lt;/span&gt;: data visualization
+- &lt;span class="pack"&gt;dplyr&lt;/span&gt;: data manipulation
+- &lt;span class="pack"&gt;tidyr&lt;/span&gt;: data tidying
+- &lt;span class="pack"&gt;readr&lt;/span&gt;: data import
+- &lt;span class="pack"&gt;purrr&lt;/span&gt;: functional programming
+- &lt;span class="pack"&gt;tibble&lt;/span&gt;: tibbles, a modern re-imagining of data frames
+
+And of course the &lt;span class="pack"&gt;tidyverse&lt;/span&gt; package itself
+- loads all of the above in a way that will avoid naming conflicts
+
+---
+
+## Selecting Columns
+
+A common step is to subset the data by column
+
+
+```r
+demographics %&gt;% 
+  select(gender, age, libuser)
+
+demographics %&gt;% 
+  select(-libuser)
+```
+
+### Select helpers
+- &lt;span class="func"&gt;starts_with&lt;/span&gt;: starts with a prefix
+- &lt;span class="func"&gt;ends_with&lt;/span&gt;: ends with a suffix
+- &lt;span class="func"&gt;contains&lt;/span&gt;: contains a literal string
+- &lt;span class="func"&gt;matches&lt;/span&gt;: matches a regular expression
+- &lt;span class="func"&gt;num_range&lt;/span&gt;: a numerical range like x01, x02, x03.
+- &lt;span class="func"&gt;one_of&lt;/span&gt;: variables in character vector.
+- &lt;span class="func"&gt;everything&lt;/span&gt;: all variables.
+
+
+---
+
+## Filtering Rows
+
+To filtering data, think of a logical statement
+
+- Can be `TRUE` or `FALSE`
+
+
+```r
+my_filtered_data = demographics %&gt;% 
+  filter(age &lt; 40)
+
+my_filtered_data = demographics %&gt;% 
+  filter(libuser == 1)
+```
+
+
+---
+
+## Generating new data
+
+Use mutate to create a new column
+
+
+```r
+mydata = demographics %&gt;% 
+  mutate(new_age = (age - mean(age, na.rm = T))/sd(age, na.rm = T))   
+```
+
+
+### For specific scenarios:
+- &lt;span class="func"&gt;mutate_at&lt;/span&gt;
+- &lt;span class="func"&gt;mutate_if&lt;/span&gt;
+- &lt;span class="func"&gt;mutate_all&lt;/span&gt;
+
+
+---
+
+
+## Renaming columns
+
+
+```r
+demographics = demographics %&gt;% 
+  rename(age_std = new_age)
+```
+
+Similar variants as &lt;span class="func"&gt;mutate&lt;/span&gt;
+- &lt;span class="func"&gt;rename_at&lt;/span&gt;
+- &lt;span class="func"&gt;rename_if&lt;/span&gt;
+- &lt;span class="func"&gt;rename_all&lt;/span&gt;
+
+
+
+---
+
+## Merging data from different sources
+
+Merging data can take on a variety of forms
+
+Mutating Joins:
+- &lt;span class="func"&gt;left_join&lt;/span&gt;
+- &lt;span class="func"&gt;right_join&lt;/span&gt; 
+- &lt;span class="func"&gt;full_join&lt;/span&gt;
+- &lt;span class="func"&gt;inner_join&lt;/span&gt;
+
+Filtering Joins:
+- &lt;span class="func"&gt;semi_join&lt;/span&gt;
+- &lt;span class="func"&gt;anti_join&lt;/span&gt;
+
+---
+
+## Original Data Frame
+
+&lt;img src="img/original-dfs.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+## Left Join
+
+&gt; All rows from x, and all columns from x and y. Rows in x with no match in y will have NA values in the new columns.
+
+&lt;img src="img/left-join.gif" width="66%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Left Join (extra Rows in y)
+
+&gt; If there are multiple matches between x and y, all combinations of the matches are returned.
+
+&lt;img src="img/left-join-extra.gif" width="66%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Right Join
+
+&gt; All rows from y, and all columns from x and y. Rows in y with no match in x will have NA values in the new columns.
+
+&lt;img src="img/right-join.gif" width="66%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Full Join
+
+&gt; All rows and all columns from both x and y. Where there are not matching values, returns NA for the one missing.
+
+&lt;img src="img/full-join.gif" width="66%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Inner Join
+
+&gt; All rows from x where there are matching values in y, and all columns from x and y.
+
+&lt;img src="img/inner-join.gif" width="66%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Semi Join
+
+&gt; All rows from x where there are matching values in y, keeping just columns from x.
+
+&lt;img src="img/semi-join.gif" width="66%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Anti Join
+
+&gt; All rows from x where there are not matching values in y, keeping just columns from x.
+
+&lt;img src="img/anti-join.gif" width="66%" style="display: block; margin: auto;" /&gt;
+
+---
+## Example Joins
+
+
+```r
+# same N rows as demos
+left_join(demographics, ids)
+
+# only ~ 50k rows
+inner_join(demographics, ids) 
+```
+
+
+
+---
+
+
+
+## Reshaping Data
+
+Wide to long
+
+Long to Wide
+
+---
+
+## Reshaping Data
+
+&lt;img src="img/original-dfs-tidy.png" width="66%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Reshaping Data
+
+&lt;img src="img/tidyr-spread-gather.gif" width="66%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Benefits of long data
+
+More 'tidy'
+
+Easier visualizations
+
+Assumed for many common models
+
+---
+
+## Caveat
+
+The next major release of tidyr will change approach
+
+More flexible, consistent
+
+- &lt;span class="func"&gt;pivot_longer&lt;/span&gt;
+- &lt;span class="func"&gt;pivot_wider&lt;/span&gt;
+
+---
+
+## Summary
+
+All data requires processing, cleaning, etc.
+
+Data processing takes care and consideration
+
+Getting comfortable with your tool makes it easier
+
+#### Better processing means great analysis and visualization!
+
+---
+
+## Tidyverse
+
+Figure credits: https://github.com/gadenbuie/tidyexplain
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "pygments",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,306 @@
+---
+title: 'Module 1: Dealing with Data'
+output:
+  html_document:
+    df_print: paged
+    css: other.css
+  html_notebook:
+    highlight: pygments
+    theme: sandstone
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r init, echo=FALSE}
+# these options are primary useful to the creation of the html document
+knitr::opts_chunk$set(
+  echo = T,
+  eval = F,
+  message = F,
+  warning = F,
+  comment = NA,
+  R.options = list(width = 120),
+  cache.rebuild = F,
+  cache = T,
+  fig.align = 'center', 
+  fig.asp = .7,
+  dev = 'svg', 
+  dev.args=list(bg = 'transparent')
+)
+
+```
+
+## Setup
+
+What is the `tidyverse`?
+
+The `tidyverse` consists of a few key packages for data import, manipulation, visualization and more.
+
+```{r setup}
+library(tidyverse)
+```
+
+
+## Objects and Classes
+
+```{r objects}
+x = 1:3
+y = 'a'
+z = list(one = x, two = y)
+
+x
+y
+z
+```
+
+```{r inspect}
+str(z)
+class(y)
+```
+
+
+## Functions
+
+A function to show how easy it is to create your own.
+
+```{r function}
+my_sum_times_two <- function(x, y) {
+  2 * sum(x, y)
+}
+
+my_sum_times_two(1, 2)
+```
+
+
+## Data Structures
+
+Vectors form the basis of R data structures. Two main types are atomic and lists.
+
+```{r vector}
+my_vector <- c(1, 2, 3)   # standard vector
+```
+
+```{r list}
+my_list <- list(a = 1, b = 2)   # a named list
+my_list
+```
+
+## Data frames
+
+Data frames are a special kind of list, and probably the most commonly used for data science purposes.
+
+```{r data_frame}
+my_data = data.frame(
+  id = 1:3,
+  name = c('Vernon', 'Ace', 'Cora')
+)
+
+my_data
+class(my_data)
+```
+
+## Importing Data
+
+Importing data is usually the first step.
+
+```{r import}
+demographics = read.csv('data/demos_anonymized.csv')
+ids = read.csv('data/ids_anonymized.csv')
+```
+
+## Working with Databases
+
+Databases must be connected to, but otherwise are used just like data frames.
+
+```{r databases}
+# requires DBI and RSQLite packages; just for demo
+library(DBI)
+con <- dbConnect(RSQLite::SQLite(), ":memory:")
+# con
+
+copy_to(con, demographics, 'demos')
+```
+
+
+
+## Selecting Columns
+
+A common step is to subset the data by column.
+
+```{r select1}
+demographics %>% 
+  select(gender, age, libuser)
+```
+
+
+```{r select2}
+demographics %>% 
+  select(-libuser)
+```
+
+```{r select3}
+demographics %>% 
+  select(starts_with('award'))
+```
+
+
+## Filtering Rows
+
+To filtering data, think of a logical statement, something that can be `TRUE` or `FALSE`.
+
+```{r filter}
+my_filtered_data = demographics %>% 
+  filter(age < 40)
+
+my_filtered_data = demographics %>% 
+  filter(libuser == 1)
+```
+
+
+## Generating new data
+
+Another very common data processing task is to generate new variables.
+
+```{r mutate}
+demographics = demographics %>% 
+  mutate(new_age = (age - mean(age, na.rm = T))/sd(age, na.rm = T))   
+```
+
+## Renaming columns
+
+
+
+```{r rename1}
+demographics = demographics %>% 
+  rename(age_std = new_age)
+```
+
+```{r rename2}
+demographics %>% 
+  rename_all(toupper) %>% 
+  colnames()
+```
+
+## Merging
+
+Merging data can take on a variety of forms, and depending on the data, can be be quite complicated.
+
+```{r example_joins}
+# same N rows as demos
+left_join(demographics, ids)
+
+# only ~ 50k rows
+inner_join(demographics, ids) 
+```
+
+## Exercises
+
+### Selecting and filtering
+
+Use the `:` operator to select successive columns.
+
+```{r ex1a, eval=FALSE}
+colnames(demographics)
+
+demographics %>% 
+  select(?)
+```
+
+Filter the data to award amounts less than 500000.
+
+
+```{r ex1b, eval=FALSE}
+demographics %>% 
+  filter(award_total_amount ?)
+```
+
+### Generating new data
+
+Generate a new award amount variable that is the log of the original.  Give the new variable a useful name.
+
+```{r ex2, eval=FALSE}
+demographics %>% 
+  mutate(? = log(?))
+```
+
+
+## Python examples
+
+Using Python for data science is not far removed from R. Python's main data processing module is `pandas`, which serves as a means to provide R-like data frames to the world of Python.
+
+
+### Import
+
+```{python py_import, engine.path= '/Users/micl/anaconda3/bin/python'}
+# note how when using something other than R, you have to specify the engine path
+import pandas as pd
+import numpy  as np
+
+demographics = pd.read_csv('data/demos_anonymized.csv')
+ids = pd.read_csv('data/ids_anonymized.csv')
+
+demographics.head()  # show a few lines
+```
+
+### Selecting Columns
+
+```{python py_select}
+# select by name
+demographics[['age', 'award_total_amount']]
+```
+
+
+```{python py_select2}
+# select successive columns
+demographics.loc[:,'libuser':'age']
+```
+
+
+```{python py_select3}
+# select by pattern
+demographics.filter(regex='^award') 
+```
+
+### Filtering Rows
+
+```{python py_filter}
+my_filtered_data = demographics[demographics.libuser == 1]
+my_filtered_data.libuser.nunique()
+```
+
+### Generating new data
+
+```{python py_mutate}
+demographics[['new_age']] = (demographics[['age']] - np.mean(demographics[['age']])) / np.std(demographics[['age']])
+
+demographics.new_age.describe()  # mean = 0  sd = 1
+```
+
+### Renaming columns
+
+```{python py_rename}
+demographics = demographics %>% 
+  rename(age_std = new_age)
+```
+
+
+### Joins
+
+```{python py_left_join}
+demos_joined = pd.merge(demographics, ids, how='left', on='EMPLID')
+demos_joined
+```
+
+```{python py_left_join2}
+demos_joined = demographics.join(ids, how='left', lsuffix='EMPLID')
+demos_joined.shape
+demos_joined.columns
+```
+
+
+```{python py_inner_join}
+demos_joined = demographics.join(ids, how='inner', lsuffix='EMPLID')
+
+demos_joined.columns
+```
+

@@ -112,18 +112,18 @@ lm(formula = award_total_amount ~ libuser, data = model_variables)
 
 Residuals:
      Min       1Q   Median       3Q      Max 
--5389430  -817146     2722   817201  4864394 
+-4744400  -834374     -453   833036  5015012 
 
 Coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  4890926       7578  645.44   &lt;2e-16 ***
-libuseryes    586785      10713   54.77   &lt;2e-16 ***
+(Intercept)  4754400       7751  613.36   &lt;2e-16 ***
+libuseryes    587764      10964   53.61   &lt;2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 1198000 on 49998 degrees of freedom
-Multiple R-squared:  0.05661,	Adjusted R-squared:  0.05659 
-F-statistic:  3000 on 1 and 49998 DF,  p-value: &lt; 2.2e-16
+Residual standard error: 1226000 on 49998 degrees of freedom
+Multiple R-squared:  0.05435,	Adjusted R-squared:  0.05433 
+F-statistic:  2874 on 1 and 49998 DF,  p-value: &lt; 2.2e-16
 ```
 
 
@@ -153,19 +153,19 @@ The p-value suggests this is a statistically significant effect.
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style="padding-right: 12px; border: none;"&gt;(Intercept)&lt;/td&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;4890926.04 (7577.63)&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;4754399.55 (7751.43)&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style="padding-right: 12px; border: none;"&gt;libuseryes&lt;/td&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;586785.04 (10712.75)&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;587763.97 (10964.37)&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style="border-top: 1px solid black;"&gt;R&lt;sup style="vertical-align: 0px;"&gt;2&lt;/sup&gt;&lt;/td&gt;
-&lt;td style="border-top: 1px solid black;"&gt;0.06&lt;/td&gt;
+&lt;td style="border-top: 1px solid black;"&gt;0.05&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style="padding-right: 12px; border: none;"&gt;Adj. R&lt;sup style="vertical-align: 0px;"&gt;2&lt;/sup&gt;&lt;/td&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;0.06&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;0.05&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style="padding-right: 12px; border: none;"&gt;Num. obs.&lt;/td&gt;
@@ -173,7 +173,7 @@ The p-value suggests this is a statistically significant effect.
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style="border-bottom: 2px solid black;"&gt;RMSE&lt;/td&gt;
-&lt;td style="border-bottom: 2px solid black;"&gt;1197721.05&lt;/td&gt;
+&lt;td style="border-bottom: 2px solid black;"&gt;1225853.63&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style="padding-right: 12px; border: none;" colspan="3"&gt;&lt;span style="font-size:0.8em"&gt;&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;p &amp;lt; 0.001, &lt;sup style="vertical-align: 0px;"&gt;**&lt;/sup&gt;p &amp;lt; 0.01, &lt;sup style="vertical-align: 0px;"&gt;*&lt;/sup&gt;p &amp;lt; 0.05&lt;/span&gt;&lt;/td&gt;
@@ -213,9 +213,9 @@ Analysis of Variance Table
 
 Model 1: award_total_amount ~ libuser
 Model 2: award_total_amount ~ libuser + gender
-  Res.Df        RSS Df Sum of Sq     F    Pr(&gt;F)    
-1  49998 7.1724e+16                                 
-2  49997 5.5244e+16  1 1.648e+16 14914 &lt; 2.2e-16 ***
+  Res.Df        RSS Df  Sum of Sq     F    Pr(&gt;F)    
+1  49998 7.5133e+16                                  
+2  49997 5.9442e+16  1 1.5691e+16 13197 &lt; 2.2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
@@ -271,7 +271,7 @@ model_logreg = glm(award_total_amount &gt; 5e6 ~ age,
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style="padding-right: 12px; border: none;"&gt;(Intercept)&lt;/td&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;-6.77 (0.10)&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;-6.90 (0.09)&lt;sup style="vertical-align: 0px;"&gt;***&lt;/sup&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style="padding-right: 12px; border: none;"&gt;age&lt;/td&gt;
@@ -279,19 +279,19 @@ model_logreg = glm(award_total_amount &gt; 5e6 ~ age,
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style="border-top: 1px solid black;"&gt;AIC&lt;/td&gt;
-&lt;td style="border-top: 1px solid black;"&gt;62994.04&lt;/td&gt;
+&lt;td style="border-top: 1px solid black;"&gt;61591.16&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style="padding-right: 12px; border: none;"&gt;BIC&lt;/td&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;63011.68&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;61608.79&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style="padding-right: 12px; border: none;"&gt;Log Likelihood&lt;/td&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;-31495.02&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;-30793.58&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style="padding-right: 12px; border: none;"&gt;Deviance&lt;/td&gt;
-&lt;td style="padding-right: 12px; border: none;"&gt;62990.04&lt;/td&gt;
+&lt;td style="padding-right: 12px; border: none;"&gt;61587.16&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td style="border-bottom: 2px solid black;"&gt;Num. obs.&lt;/td&gt;

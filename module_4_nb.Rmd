@@ -1,11 +1,14 @@
 ---
-title: "Module 4: More Analytics"
-output: 
-  html_notebook: 
+title: 'Module 4: More Analytics'
+output:
+  html_document:
+    df_print: paged
+    css: other.css
+  html_notebook:
+    css: other.css
     highlight: pygments
     theme: sandstone
-    css: other.css
-editor_options: 
+editor_options:
   chunk_output_type: inline
 ---
 
@@ -18,8 +21,8 @@ knitr::opts_chunk$set(
   warning = F, 
   comment = NA,
   R.options=list(width=120), 
-  cache.rebuild=F, 
-  cache=T,
+  cache.rebuild = F,
+  cache = F, 
   fig.align='center', 
   fig.asp = .7,
   dev = 'svg', 
@@ -27,21 +30,100 @@ knitr::opts_chunk$set(
 )
 ```
 
+The following will make sure you have what you need to run the rest of the code.
+
 ```{r catchup}
 library(tidyverse)
-demographics = read.csv('data/demos_anonymized.csv')
-ids = read.csv('data/ids_anonymized.csv')
 model_variables = read.csv('data/model_variables_anonymized.csv')
 ```
 
-## Introduction
+
+## Machine Learning
+
+Use caret to employ machine learning
+
+Start with some pre-processing of the data
+
+```{r preprocess}
+library(caret) # need to install?
+set.seed(1234) # so that the indices will be the same when re-run
+trainIndices = createDataPartition(model_variables$libuser, p=.8, list=F)
+
+X_train = model_variables %>% 
+  slice(trainIndices)
+
+X_test = model_variables %>% 
+  slice(-trainIndices)
+```
+
+
+
+Example with XGBoost
+
+```{r xgboost_setup}
+library(xgboost)  # need to install?
+
+xgb_opts = expand.grid(
+  eta = c(.3, .4),
+  max_depth = c(9, 12),
+  colsample_bytree = c(.6, .8),
+  subsample = c(.5, .75, 1),
+  nrounds = 100, # 1000 would be more reasonable, but notably time consuming
+  min_child_weight = 1,
+  gamma = 0
+)
+
+cv_opts = trainControl(method='cv', number=10)
+```
+
+Run in parallel
+
+```{r xgboost}
+# for parallel processing
+library(doParallel)  # need to install?
+cl = makeCluster(detectCores() - 1)
+registerDoParallel(cl)
+
+results_xgb = train(
+  libuser ~ .,
+  data = X_train,
+  method = 'xgbTree',
+  preProcess = c('center', 'scale'),
+  trControl = cv_opts,
+  tuneGrid = xgb_opts
+)
+
+stopCluster(cl)
+
+results_xgb
+```
+
+---
+
+## Machine Learning
+
+
+```{r xgb_cm}
+preds_gb = predict(results_xgb, X_test)
+confusionMatrix(preds_gb, X_test$libuser, positive='yes')
+```
+
 
 
 ## Python
 
+With machine learning, we finally get to a point where Python is on par with and typically surpasses R.
+
+Most techniques that would fall under the heading of `machine learning` are first developed in Python.
+
+For at least some techniques, Python will typically run faster, possibly notably so, but this depends on many factors.
+
 ### Init
 
 ```{python py_init, engine.path= '/Users/micl/anaconda3/bin/python'}
+
+# note how when using something other than R, you have to specify the engine path
+
 import pandas as pd
 import numpy as np
 import statsmodels

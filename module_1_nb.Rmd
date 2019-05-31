@@ -1,26 +1,28 @@
 ---
-title: "Module 1: Dealing with Data"
-output: 
-  html_notebook: 
+title: 'Module 1: Dealing with Data'
+output:
+  html_document:
+    df_print: paged
+    css: other.css
+  html_notebook:
     highlight: pygments
     theme: sandstone
-    css: other.css
-editor_options: 
+editor_options:
   chunk_output_type: inline
 ---
 
 ```{r init, echo=FALSE}
 # these options are primary useful to the creation of the html document
 knitr::opts_chunk$set(
-  echo=T, 
+  echo = T,
   eval = F,
-  message = F, 
-  warning = F, 
+  message = F,
+  warning = F,
   comment = NA,
-  R.options=list(width=120), 
-  cache.rebuild=F, 
-  cache=T,
-  fig.align='center', 
+  R.options = list(width = 120),
+  cache.rebuild = F,
+  cache = T,
+  fig.align = 'center', 
   fig.asp = .7,
   dev = 'svg', 
   dev.args=list(bg = 'transparent')
@@ -110,7 +112,7 @@ ids = read.csv('data/ids_anonymized.csv')
 
 Databases must be connected to, but otherwise are used just like data frames.
 
-```{r databases, eval=FALSE}
+```{r databases}
 # requires DBI and RSQLite packages; just for demo
 library(DBI)
 con <- dbConnect(RSQLite::SQLite(), ":memory:")
@@ -224,14 +226,13 @@ demographics %>%
 
 ## Python examples
 
-Using Python for data science is not far removed from R
-
-Python's main data processing module is `pandas`
+Using Python for data science is not far removed from R. Python's main data processing module is `pandas`, which serves as a means to provide R-like data frames to the world of Python.
 
 
 ### Import
 
 ```{python py_import, engine.path= '/Users/micl/anaconda3/bin/python'}
+# note how when using something other than R, you have to specify the engine path
 import pandas as pd
 import numpy  as np
 

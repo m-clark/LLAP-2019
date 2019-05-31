@@ -1,11 +1,14 @@
 ---
-title: "Module 3: Introductory Analytics"
-output: 
-  html_notebook: 
+title: 'Module 3: Introductory Analytics'
+output:
+  html_document:
+    df_print: paged
+    css: other.css
+  html_notebook:
     highlight: pygments
     theme: sandstone
     css: other.css
-editor_options: 
+editor_options:
   chunk_output_type: inline
 ---
 
@@ -138,9 +141,12 @@ confusionMatrix(predictions, target)
 
 ## Python examples
 
+While Python has statistical modeling capabilities, it's nowhere near the level of R.  If you just want to stay in the Python world, you can do basic models without issue.  However, it suffers from consistency of method, documentation, stability across updates etc.  You might be better off simply calling R with something like `rpy2` or a similar approach.
+
 ### Init
 
 ```{python py_init, engine.path= '/Users/micl/anaconda3/bin/python'}
+# note how when using something other than R, you have to specify the engine path
 import pandas as pd
 import numpy as np
 import statsmodels

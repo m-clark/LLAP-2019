@@ -142,9 +142,6 @@ Example with XGBoost
 
 ```r
 library(xgboost)
-modelLookup("xgbLinear")
-modelLookup("xgbTree")
-
 xgb_opts = expand.grid(
   eta = c(.3, .4),
   max_depth = c(9, 12),
@@ -201,26 +198,26 @@ Confusion Matrix and Statistics
 
           Reference
 Prediction   no  yes
-       no  2968 1922
-       yes 2028 3081
+       no  3276 2271
+       yes 1726 2727
                                           
-               Accuracy : 0.605           
-                 95% CI : (0.5953, 0.6146)
-    No Information Rate : 0.5004          
-    P-Value [Acc &gt; NIR] : &lt; 2e-16         
+               Accuracy : 0.6003          
+                 95% CI : (0.5906, 0.6099)
+    No Information Rate : 0.5002          
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
                                           
-                  Kappa : 0.2099          
+                  Kappa : 0.2006          
                                           
- Mcnemar's Test P-Value : 0.09479         
+ Mcnemar's Test P-Value : &lt; 2.2e-16       
                                           
-            Sensitivity : 0.6158          
-            Specificity : 0.5941          
-         Pos Pred Value : 0.6031          
-         Neg Pred Value : 0.6070          
-             Prevalence : 0.5004          
-         Detection Rate : 0.3081          
-   Detection Prevalence : 0.5110          
-      Balanced Accuracy : 0.6050          
+            Sensitivity : 0.5456          
+            Specificity : 0.6549          
+         Pos Pred Value : 0.6124          
+         Neg Pred Value : 0.5906          
+             Prevalence : 0.4998          
+         Detection Rate : 0.2727          
+   Detection Prevalence : 0.4453          
+      Balanced Accuracy : 0.6003          
                                           
        'Positive' Class : yes             
                                           

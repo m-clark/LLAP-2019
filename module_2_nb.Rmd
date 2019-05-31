@@ -1,25 +1,27 @@
 ---
-title: "Module 2: Summarizing and Visualizing Data"
-output: 
-  html_notebook: 
+title: 'Module 2: Summarizing and Visualizing Data'
+output:
+  html_document:
+    df_print: paged
+    css: other.css
+  html_notebook:
     highlight: pygments
     theme: sandstone
-    css: other.css
-editor_options: 
+editor_options:
   chunk_output_type: inline
 ---
 
 ```{r init, echo=FALSE}
 # these options are primary useful to the creation of the html document
 knitr::opts_chunk$set(
-  echo=T, 
+  echo = T,
   eval = F,
-  message = F, 
-  warning = F, 
+  message = F,
+  warning = F,
   comment = NA,
-  R.options=list(width=120), 
-  cache.rebuild=F, 
-  cache=F,
+  R.options = list(width = 120),
+  cache.rebuild = F,
+  cache = F, 
   fig.align='center', 
   fig.asp = .7,
   dev = 'svg', 
@@ -27,14 +29,16 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r catchup, eval=TRUE}
+
+
+## Introduction
+
+```{r catchup}
 library(tidyverse)
 demographics = read.csv('data/demos_anonymized.csv')
 ids = read.csv('data/ids_anonymized.csv')
 model_variables = read.csv('data/model_variables_anonymized.csv')
 ```
-
-## Introduction
 
 ## Get a Quick Summary
 
@@ -43,7 +47,7 @@ It's always a good idea to glance at the data
 ```{r summary}
 glimpse(demographics)
 ```
-```{r}
+```{r summary2}
 summary(demographics[,1:10])
 ```
 
@@ -53,7 +57,7 @@ summary(demographics[,1:10])
 
 A very common operation is to do things by group(s) then create new summary variables.
 
-```{r group_by, eval=TRUE}
+```{r group_by}
 demographics %>% 
   group_by(libuser) %>% 
   summarise(age = mean(age, na.rm = T)) 
@@ -65,7 +69,7 @@ demographics %>%
 
 Do multiple operations at once
 
-```{r group_by2, eval=TRUE}
+```{r group_by2}
 demographics %>% 
   group_by(libuser) %>% 
   summarise(age_mean = mean(age, na.rm = T),
@@ -80,7 +84,7 @@ demographics %>%
 
 We’ll use the `map` function to *map* the `sum` function to each element in the list
 
-```{r map, eval=TRUE}
+```{r map}
 x = list(1:3, 4:6, 7:9)
 map(x, sum)
 ```
@@ -93,7 +97,7 @@ We can even do this with modeling and other operations.
 
 This extracts the coefficients from a model run for each group.
 
-```{r group_by3, eval=TRUE}
+```{r group_by3}
 demographics %>% 
   drop_na(race) %>% 
   group_split(race) %>%   
@@ -396,9 +400,12 @@ ggplotly()
 
 ## Python examples
 
+Python has come a long way in terms of data processing.  There is a misconception that it is faster and less memory-hungry than R, but this depends on many factors and is generally not true.
+
 ### Init
 
 ```{python py_init, engine.path= '/Users/micl/anaconda3/bin/python'}
+# note how when using something other than R, you have to specify the engine path
 import pandas as pd
 import numpy as np
 
@@ -424,7 +431,7 @@ demographics.describe(include = [np.object])
 
 
 
-```{python py_group_by, eval=TRUE}
+```{python py_group_by}
 lib_group = demographics.groupby('libuser', sort=True, )
 
 # automatically chooses numeric
@@ -432,16 +439,16 @@ lib_group.mean()
 ```
 
 
-```{python py_group_by2, eval=TRUE}
+```{python py_group_by2}
 lib_group.get_group(0).head()
 ```
 
 
-```{python py_group_by3, eval=TRUE}
+```{python py_group_by3}
 lib_group.size()
 ```
 
-```{python py_group_by4, eval=TRUE}
+```{python py_group_by4}
 lib_group.describe()
 ```
 ### Mapping a function
@@ -480,7 +487,7 @@ year_award_average = demographics[demographics.libuser == 1].groupby(['award_hom
 year_award_average
 ```
 
-
+Example boxplot with plotly.
 
 ```{python py_plotly_init}
 import plotly
@@ -503,8 +510,4 @@ trace1 = go.Box(
 )
 data = [trace0, trace1]
 py.iplot(data)
-```
-
-
-```{python}
 ```

@@ -185,9 +185,6 @@ Example with XGBoost
 
 ```{r xgboost_setup, eval=FALSE}
 library(xgboost)
-modelLookup("xgbLinear")
-modelLookup("xgbTree")
-
 xgb_opts = expand.grid(
   eta = c(.3, .4),
   max_depth = c(9, 12),
@@ -243,7 +240,7 @@ cm_test = confusionMatrix(predictions_test, X_test$libuser)
 ```
 
 
-```{r echo=-(1:2), eval=TRUE}
+```{r xgb_cm, echo=-(1:2), eval=TRUE}
 load('data/results_xgb.RData')
 library(caret)
 preds_gb = predict(results_xgb, X_test)

@@ -1,6 +1,8 @@
 ## LLAP-2019
 
-Steps
+This is a set of notes for the Learning Library Analytics Workshop, providing a very brief intro to using R for data and library science.
+
+Steps to use this repo:
 
 1. Download the workshop project [here](https://github.com/m-clark/LLAP-2019/raw/master/workshop_project.zip) (workshop_project.zip above)
 
